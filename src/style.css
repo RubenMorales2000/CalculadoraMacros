@@ -88,10 +88,7 @@ form {
   margin: 0 auto; 
   margin-left: calc(50% - 24vw);
 }
-.nombre-alimento {
-  width: 32vw;
-  margin: 0 auto;
-}
+
 /* Etiquetas alineadas a la derecha */
 label {
   text-align: right;
@@ -138,7 +135,15 @@ p {
   margin-top: 1rem;
   font-style: italic;
 }
-
+/*************  Estilos para la creacion de alimentos  *************/
+.nombre-alimento {
+  width: 32vw;
+  margin: 0 auto;
+}
+.newFoodInput{
+  min-width: 20vw;
+}
+/*******************************************************************/
 /************ Estilos para el selector de alimentos ****************/
 .food-entry {
   display: flex;
@@ -159,7 +164,7 @@ p {
 
 .food-input {
   width: 2vw;
-  min-width: 20px;
+  min-width: 35px;
 }
 
 .food-remove-button {

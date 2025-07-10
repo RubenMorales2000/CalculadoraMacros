@@ -8,27 +8,27 @@
 
       <div class="form-group">
         <label for="carbs">Carbohidratos (g):</label>
-        <input id="carbs" type="number" v-model.number="newFood.carbs" min="0" step="0.1" required />
+        <input id="carbs" class="newFoodInput" type="number" v-model.number="newFood.carbs" min="0" step="0.1" required />
       </div>
 
       <div class="form-group">
         <label for="protein">Proteínas (g):</label>
-        <input id="protein" type="number" v-model.number="newFood.protein" min="0" step="0.1" required />
+        <input id="protein" class="newFoodInput" type="number" v-model.number="newFood.protein" min="0" step="0.1" required />
       </div>
 
       <div class="form-group">
         <label for="fat">Grasas (g):</label>
-        <input id="fat" type="number" v-model.number="newFood.fat" min="0" step="0.1" required />
+        <input id="fat" class="newFoodInput" type="number" v-model.number="newFood.fat" min="0" step="0.1" required />
       </div>
 
       <div class="form-group">
         <label for="saturatedFat">Grasas saturadas (g):</label>
-        <input id="saturatedFat" type="number" v-model.number="newFood.saturatedFat" min="0" step="0.1" required />
+        <input id="saturatedFat" class="newFoodInput" type="number" v-model.number="newFood.saturatedFat" min="0" step="0.1" required />
       </div>
 
       <div class="form-group">
         <label for="calories">Calorías:</label>
-        <input id="calories" type="number" v-model.number="newFood.calories" min="0" step="0.1" required />
+        <input id="calories" class="newFoodInput" type="number" v-model.number="newFood.calories" min="0" step="0.1" required />
       </div>
 
       <button type="submit">Guardar alimento</button>
