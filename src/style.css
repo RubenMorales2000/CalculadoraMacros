@@ -158,7 +158,8 @@ p {
 }
 
 .food-input {
-  width: 100px;
+  width: 2vw;
+  min-width: 20px;
 }
 
 .food-remove-button {

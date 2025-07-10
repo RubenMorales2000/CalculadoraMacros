@@ -10,7 +10,7 @@
       </select>
 
       <input type="number" min="0" v-model.number="selectedFoods[index].quantity" @input="calculateTotals" class="food-input">
-       Gramos
+       Gr
       </input>
 
       <button @click="removeFood(index)" class="food-remove-button"><i class="fas fa-trash-alt"></i> </button>
