@@ -1,8 +1,8 @@
 <template>
   <div>
     <h2>Selecciona alimentos</h2>
-    <div v-for="(food, index) in selectedFoods" class="food-entry" :key="index">
-      <select v-model="selectedFoods[index].id" @change="updateSelectedFood(index)" class="food-select">
+    <div v-for="(_, index) in selectedFoods" class="food-entry" :key="index">
+      <select v-model="selectedFoods[index].id" @change="updateSelectedFood()" class="food-select">
         <option disabled value="">Elija nuevo alimento</option>
         <option v-for="food in foods" :key="food.id" :value="food.id">
           {{ food.name }}
@@ -76,7 +76,7 @@ function removeFood(index: number) {
   calculateTotals()
 }
 
-function updateSelectedFood(index: number) {
+function updateSelectedFood() {
   calculateTotals()
 }
 
