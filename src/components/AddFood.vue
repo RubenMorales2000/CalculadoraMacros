@@ -7,22 +7,22 @@
       </div>
 
       <div class="form-group">
-        <label for="carbs">Carbohidratos (g):</label>
+        <label for="carbs">Carbohidratos(g):</label>
         <input id="carbs" class="newFoodInput" type="number" v-model.number="newFood.carbs" min="0" step="0.1" required />
       </div>
 
       <div class="form-group">
-        <label for="protein">Proteínas (g):</label>
+        <label for="protein">Proteínas(g):</label>
         <input id="protein" class="newFoodInput" type="number" v-model.number="newFood.protein" min="0" step="0.1" required />
       </div>
 
       <div class="form-group">
-        <label for="fat">Grasas (g):</label>
+        <label for="fat">Grasas(g):</label>
         <input id="fat" class="newFoodInput" type="number" v-model.number="newFood.fat" min="0" step="0.1" required />
       </div>
 
       <div class="form-group">
-        <label for="saturatedFat">Grasas saturadas (g):</label>
+        <label for="saturatedFat">Grasas sats(g):</label>
         <input id="saturatedFat" class="newFoodInput" type="number" v-model.number="newFood.saturatedFat" min="0" step="0.1" required />
       </div>
 

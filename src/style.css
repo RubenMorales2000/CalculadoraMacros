@@ -154,16 +154,18 @@ p {
   flex-wrap: wrap;
 }
 
-.food-select,
+.food-select{
+  font-size: 14px;
+  max-width: 400px;
+}
+
 .food-input {
   padding: 6px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 14px;
-}
-
-.food-input {
   width: 2vw;
+  max-width: 400px;
   min-width: 35px;
 }
 

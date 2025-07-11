@@ -2,16 +2,20 @@
   <div>
     <h2>Selecciona alimentos</h2>
     <div v-for="(_, index) in selectedFoods" class="food-entry" :key="index">
-      <select v-model="selectedFoods[index].id" @change="updateSelectedFood()" class="food-select">
-        <option disabled value="">Elija nuevo alimento</option>
-        <option v-for="food in foods" :key="food.id" :value="food.id">
-          {{ food.name }}
-        </option>
-      </select>
-
-      <input type="number" min="0" v-model.number="selectedFoods[index].quantity" @input="calculateTotals" class="food-input">
-       Gr
-      </input>
+      
+     <n-select
+        v-model:value="selectedFoods[index].id"
+        :options="foods"
+        label-field="name"
+        value-field="id"
+        filterable
+        clearable
+        placeholder="Elija nuevo alimento"
+        class="food-select"
+        @update:value="updateSelectedFood()"
+      />
+      
+      <input type="number" min="0" v-model.number="selectedFoods[index].quantity" @input="calculateTotals" class="food-input">Gr</input>
 
       <button @click="removeFood(index)" class="food-remove-button"><i class="fas fa-trash-alt"></i> </button>
     </div>
@@ -32,6 +36,7 @@ import { ref, reactive, onMounted } from 'vue'
 import type { FoodItem } from '../types/FoodItem'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
+import { create, NSelect, NButton, NInput, NForm, NFormItem, NCard } from 'naive-ui'
 
 interface SelectedFood {
   id: string
