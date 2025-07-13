@@ -110,3 +110,38 @@ onMounted(async () => {
   calculateTotals()
 })
 </script>
+
+<style scoped>
+.food-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.food-select {
+  font-size: 14px;
+  max-width: 400px;
+}
+
+.food-input {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 2vw;
+  max-width: 400px;
+  min-width: 35px;
+}
+
+.food-remove-button {
+  background: none;
+  margin-bottom: 15px;
+  margin-left: 20px;
+  color: red;
+  border: 1px solid red;
+}
+
+</style>

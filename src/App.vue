@@ -18,7 +18,7 @@ function goToCalculator() {
   <div class="app-container">
     <div class="nav-buttons">
       <button v-if="currentView === 'calculator'" @click="goToAddFood" class="switch-button">
-        ➕ Crear nuevo alimento
+        ➕ Tu nevera
       </button>
       <button v-if="currentView === 'addFood'" @click="goToCalculator" class="switch-button">
         🔙 Volver a calculadora
