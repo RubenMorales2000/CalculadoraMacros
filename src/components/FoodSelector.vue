@@ -115,14 +115,17 @@ onMounted(async () => {
 .food-entry {
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   gap: 8px;
   margin-bottom: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* ⛔ evita que salten de línea */
+  overflow: hidden;
 }
 
 .food-select {
   font-size: 14px;
+  flex: 1 1 150px; /* permite que se encoja */
+  min-width: 100px;
   max-width: 30vh;
 }
 
@@ -131,15 +134,16 @@ onMounted(async () => {
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 14px;
-  width: 2vw;
-  max-width: 400px;
-  min-width: 35px;
+  flex: 0 1 70px; /* permite encoger */
+  min-width: 45px;
+  max-width: 120px;
 }
 
 .food-remove-button {
   background: none;
   margin-bottom: 15px;
   color: red;
+  flex-shrink: 0; /* evita que se encoja */
 }
 
 </style>
