@@ -36,7 +36,7 @@ import { ref, reactive, onMounted } from 'vue'
 import type { FoodItem } from '../types/FoodItem'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
-import { create, NSelect, NButton, NInput, NForm, NFormItem, NCard } from 'naive-ui'
+import { NSelect} from 'naive-ui'
 
 interface SelectedFood {
   id: string
