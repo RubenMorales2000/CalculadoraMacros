@@ -126,7 +126,7 @@ onMounted(async () => {
   font-size: 14px;
   flex: 1 1 150px; /* permite que se encoja */
   min-width: 100px;
-  max-width: 10vh;
+  max-width: 20%;
 }
 
 .food-input {
