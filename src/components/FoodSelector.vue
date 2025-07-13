@@ -123,7 +123,7 @@ onMounted(async () => {
 
 .food-select {
   font-size: 14px;
-  max-width: 300px;
+  max-width: 40vh;
 }
 
 .food-input {
@@ -141,7 +141,6 @@ onMounted(async () => {
   margin-bottom: 15px;
   margin-left: 1vh;
   color: red;
-  border: 1px solid red;
 }
 
 </style>
