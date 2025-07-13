@@ -116,7 +116,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   margin-bottom: 10px;
   flex-wrap: nowrap; /* ⛔ evita que salten de línea */
   overflow: hidden;
@@ -126,7 +126,7 @@ onMounted(async () => {
   font-size: 14px;
   flex: 1 1 150px; /* permite que se encoja */
   min-width: 100px;
-  max-width: 30vh;
+  max-width: 10vh;
 }
 
 .food-input {
