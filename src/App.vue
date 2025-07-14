@@ -1,33 +1,19 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-import MacroCalculator from './views/MacroCalculator.vue'
-import AddFood from './views/AddFood.vue'
-
-const currentView = ref<'calculator' | 'addFood'>('calculator')
-
-function goToAddFood() {
-  currentView.value = 'addFood'
-}
-
-function goToCalculator() {
-  currentView.value = 'calculator'
-}
-</script>
-
 <template>
-  <div class="app-container">
-    <div class="nav-buttons">
-      <button v-if="currentView === 'calculator'" @click="goToAddFood" class="switch-button">
-        ➕ Tu nevera
-      </button>
-      <button v-if="currentView === 'addFood'" @click="goToCalculator" class="switch-button">
-        🔙 Volver a calculadora
-      </button>
+  <NNotificationProvider placement="top">
+    <div class="app-container">
+      <div class="nav-buttons">
+        <button v-if="currentView === 'calculator'" @click="goToAddFood" class="switch-button">
+          ➕ Tu nevera
+        </button>
+        <button v-if="currentView === 'addFood'" @click="goToCalculator" class="switch-button">
+          🔙 Volver a calculadora
+        </button>
+      </div>
+      
+      <MacroCalculator v-if="currentView === 'calculator'" />
+      <AddFood v-if="currentView === 'addFood'" />
     </div>
-
-    <MacroCalculator v-if="currentView === 'calculator'" />
-    <AddFood v-if="currentView === 'addFood'" />
-  </div>
+  </NNotificationProvider>
 </template>
 
 <style scoped>
@@ -48,6 +34,7 @@ function goToCalculator() {
   border: none;
   color: white;
   padding: 10px 16px;
+  margin-top: 4px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -58,3 +45,20 @@ function goToCalculator() {
   background-color: #2980b9;
 }
 </style>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import MacroCalculator from './views/MacroCalculator.vue'
+import AddFood from './views/AddFood.vue'
+import { NNotificationProvider } from 'naive-ui'
+
+const currentView = ref<'calculator' | 'addFood'>('calculator')
+
+function goToAddFood() {
+  currentView.value = 'addFood'
+}
+
+function goToCalculator() {
+  currentView.value = 'calculator'
+}
+</script>

@@ -78,17 +78,6 @@ form {
   gap: 1rem;
 }
 
-/* Agrupación de cada campo: etiqueta + input */
-.form-group {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  align-items: center;
-  gap: 0.5rem;
-  width: 40vw;
-  margin: 0 auto; 
-  margin-left: calc(50% - 24vw);
-}
-
 /* Etiquetas alineadas a la derecha */
 label {
   text-align: right;
@@ -116,12 +105,11 @@ button {
   align-self: center;
   background-color: #007bff;
   color: white;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 0.4rem;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  margin-top: 1rem;
   transition: background-color 0.3s;
 }
 

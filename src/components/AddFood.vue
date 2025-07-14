@@ -1,29 +1,26 @@
 <template>
   <div class="app-container">
-    <h2 v-if="!showForm">{{ editingFood ? 'Editar alimento' : 'Lista de alimentos' }}</h2>
+    <h2 v-if="!showForm">{{ editingFood ? 'Editar ingrediente' : 'Lista de ingredientes' }}</h2>
 
-    <!-- Lista de alimentos existentes -->
     <div v-if="!showForm" class="food-list">
-      <ul>
+      <ul style="margin-block-start: 0.5em; margin-block-end: 1em; padding-inline-start: 2px; ">
         <li v-for="food in foods" :key="food.id" class="food-item">
           <div class="food-info">
             <strong>{{ food.name }}</strong> - {{ food.calories }} kcal
           </div>
-            <button class = "food-action" @click="editFood(food)">✏️</button>
-            <button class = "food-action" id="food-remove-button" @click="deleteFood(food.id)">🗑️</button>
+            <button class="food-action" @click="editFood(food)">✏️</button>
+            <button class="food-action" @click="deleteFood(food.id)">🗑️</button>
         </li>
       </ul>
-      <button @click="showForm = true">➕ Añadir nuevo alimento</button>
+      <button @click="showForm = true">➕ Añadir nuevo ingrediente</button>
     </div>
 
-    <!-- Formulario para añadir o editar alimento -->
     <div v-else>
-      <h2>{{ editingFood ? 'Editar alimento' : 'Añadir alimento' }}</h2>
+      <h2>{{ editingFood ? 'Editar ingrediente' : 'Añadir ingrediente' }}</h2>
       <form @submit.prevent="saveFood">
-        <input class="nombre-alimento" placeholder="Nombre" v-model="newFood.name" required />
-
+        <input class="nombre-ingrediente" placeholder="Nombre" v-model="newFood.name" required />
         <div class="form-group" v-for="field in ['carbs', 'protein', 'fat', 'saturatedFat', 'calories']" :key="field">
-          <label :for="field">{{ field }}:</label>
+          <label :for="field" class="foodInput-label">{{ fieldLabels[field] }}:</label>
           <input
             class="newFoodInput"
             :id="field"
@@ -34,21 +31,82 @@
             required
           />
         </div>
-
-        <button type="submit">{{ editingFood ? 'Guardar cambios' : 'Guardar alimento' }}</button>
-        <button type="button" @click="cancelForm">Cancelar</button>
+        
+        <div style="display: flex; justify-content: center; gap: 0.5rem;">
+          <button type="button" @click="cancelForm">Cancelar</button>
+          <button type="submit">Guardar</button>
+        </div>
       </form>
     </div>
-
-    <p>{{ message }}</p>
   </div>
 </template>
 
+<style scoped>
+.food-list{
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.food-info {
+  flex: 1;
+  text-align: left;
+}
+
+.food-action {
+  padding: 4px 8px;
+  margin-right: 0.5vw;
+  background: none;
+  border: none;
+  cursor: pointer;
+} 
+
+.nombre-ingrediente {
+  width: 400px;
+  max-width: 80vw;
+  margin: 0 auto; 
+}
+
+.form-group {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem auto;
+  width: fit-content;
+}
+
+.foodInput-label {
+  width: max-content;
+}
+
+.newFoodInput{
+  width: 100px;
+  max-width: 10vw;
+}
+</style>
 
 <script lang="ts" setup>
 import { reactive, ref, onMounted } from 'vue'
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import { db } from '../firebase'
+import { useNotification } from 'naive-ui'
+
+const fieldLabels: Record<string, string> = {
+  carbs: 'Carbohidratos',
+  protein: 'Proteínas',
+  fat: 'Grasas',
+  saturatedFat: 'Grasas saturadas',
+  calories: 'Calorías'
+}
 
 interface NewFood {
   name: string
@@ -73,9 +131,11 @@ const newFood = reactive<NewFood>({
 })
 
 const foods = ref<Food[]>([])
-const message = ref('')
 const showForm = ref(false)
 const editingFood = ref<Food | null>(null)
+const notification = useNotification()
+
+onMounted(loadFoods)
 
 async function loadFoods() {
   const snapshot = await getDocs(collection(db, "foods"))
@@ -87,26 +147,25 @@ async function loadFoods() {
 
 async function saveFood() {
   if (!newFood.name.trim()) {
-    message.value = "El nombre es obligatorio."
+    notification.error({title:'Error', description:"El nombre es obligatorio.", duration:3000})
     return
   }
 
   try {
     if (editingFood.value) {
-      // Modo edición
       const foodRef = doc(db, "foods", editingFood.value.id)
       await updateDoc(foodRef, { ...newFood })
-      message.value = `¡Alimento "${newFood.name}" actualizado!`
+      notification.success({title:'Guardado', description:`¡Alimento "${newFood.name}" actualizado!`, duration:3000})
     } else {
-      // Modo creación
       await addDoc(collection(db, "foods"), { ...newFood })
-      message.value = `¡Alimento "${newFood.name}" guardado correctamente!`
+      notification.success({title:'Guardado', description:`¡Alimento "${newFood.name}" guardado correctamente!`, duration:3000})
     }
 
     cancelForm()
     await loadFoods()
-  } catch (error) {
-    message.value = 'Error guardando el alimento: ' + (error as Error).message
+  } 
+  catch (error) {
+    notification.error({title:'Error', description:'Error guardando el ingrediente: ' + (error as Error).message, duration:3000})
   }
 }
 
@@ -123,56 +182,18 @@ function cancelForm() {
 }
 
 async function deleteFood(id: string) {
-  if (confirm("¿Seguro que deseas eliminar este alimento?")) {
+  if (confirm("¿Seguro que deseas eliminar este ingrediente?")) {
     try {
       await deleteDoc(doc(db, "foods", id))
-      message.value = "Alimento eliminado."
+      notification.success({title:'Alimento Eliminado', description:"Alimento eliminado correctamente", duration:3000})
       await loadFoods()
-    } catch (error) {
-      message.value = 'Error eliminando el alimento: ' + (error as Error).message
+    } 
+    catch (error) {
+      notification.error({title:'Error', description:'Error eliminando el ingrediente: ' + (error as Error).message, duration:3000})
     }
   }
 }
-
-onMounted(loadFoods)
 </script>
 
-<style scoped>
-.food-list{
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1rem;
-  border-radius: 8px;
-}
 
-.food-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 0;
-  border-bottom: 1px solid #ccc;
-  max-width: 800px;
-}
-
-.food-info {
-  flex: 1;
-  text-align: left;
-}
-
-.food-action {
-  padding: 4px 8px;
-  margin-right: 0.5vh;
-  background: none;
-  border: none;
-  cursor: pointer;
-} 
-
-.nombre-alimento {
-  width: 32vw;
-  margin: 0 auto;
-}
-.newFoodInput{
-  min-width: 20vw;
-}
-</style>
 

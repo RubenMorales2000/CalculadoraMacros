@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Calculadora de Macros</h1>
+    <h2>Calculadora de Macros</h2>
     <FoodSelector :onUpdate="handleUpdate" />
   </div>
 </template>

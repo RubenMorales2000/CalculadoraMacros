@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Añadir nuevo alimento</h1>
     <AddFood />
   </div>
 </template>

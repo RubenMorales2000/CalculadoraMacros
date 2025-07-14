@@ -1,8 +1,6 @@
 <template>
   <div>
-    <h2>Selecciona alimentos</h2>
     <div v-for="(_, index) in selectedFoods" class="food-entry" :key="index">
-      
      <n-select
         v-model:value="selectedFoods[index].id"
         :options="foods"
@@ -11,16 +9,14 @@
         filterable
         clearable
         placeholder="Elija nuevo alimento"
-        class="food-select"
+        class="ingredient-select"
         @update:value="updateSelectedFood()"
       />
-      
-      <input type="number" min="0" v-model.number="selectedFoods[index].quantity" @input="calculateTotals" class="food-input">Gr</input>
-
-      <button @click="removeFood(index)" class="food-remove-button"><i class="fas fa-trash-alt"></i> </button>
+      <input type="number" min="0" v-model.number="selectedFoods[index].quantity" @input="calculateTotals" class="quantity-input">Gr</input>
+      <button @click="removeFood(index)" class="ingredient-remove">🗑️</button>
     </div>
 
-    <button @click="addFood">Añadir alimento a la comida</button>
+    <button @click="addFood" style="margin-top: 10px;">Añadir ingrediente</button>
 
     <h3>Macros totales:</h3>
     <p>Carbohidratos: {{ totals.carbs.toFixed(2) }} g</p>
@@ -30,6 +26,38 @@
     <p>Calorías: {{ totals.calories.toFixed(2) }}</p>
   </div>
 </template>
+
+<style scoped>
+.food-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 5px;
+  flex-wrap: nowrap; 
+  overflow: hidden;
+}
+
+.ingredient-select {
+  font-size: 14px;
+  flex: 1 1 150px; 
+  max-width: 500px;
+}
+
+.quantity-input {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  flex: 0 1 50px; 
+}
+
+.ingredient-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+</style>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
@@ -44,9 +72,7 @@ interface SelectedFood {
 }
 
 const foods = ref<FoodItem[]>([])
-const selectedFoods = ref<SelectedFood[]>([
-  { id: '', quantity: 100 }
-])
+const selectedFoods = ref<SelectedFood[]>([{id:'', quantity:100}])
 
 const totals = reactive({
   carbs: 0,
@@ -54,6 +80,11 @@ const totals = reactive({
   fat: 0,
   saturatedFat: 0,
   calories: 0
+})
+
+onMounted(async () => {
+  await loadFoods()
+  calculateTotals()
 })
 
 async function loadFoods() {
@@ -73,11 +104,11 @@ async function loadFoods() {
 }
 
 function addFood() {
-  selectedFoods.value.push({ id: '', quantity: 100 })
+  selectedFoods.value.push({id:'', quantity:100})
 }
 
-function removeFood(index: number) {
-  selectedFoods.value.splice(index, 1)
+function removeFood(index:number) {
+  selectedFoods.value.splice(index,1)
   calculateTotals()
 }
 
@@ -104,46 +135,5 @@ function calculateTotals() {
     }
   })
 }
-
-onMounted(async () => {
-  await loadFoods()
-  calculateTotals()
-})
 </script>
 
-<style scoped>
-.food-entry {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-bottom: 10px;
-  flex-wrap: nowrap; /* ⛔ evita que salten de línea */
-  overflow: hidden;
-}
-
-.food-select {
-  font-size: 14px;
-  flex: 1 1 150px; /* permite que se encoja */
-  min-width: 100px;
-  max-width: 300px;
-}
-
-.food-input {
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  flex: 0 1 70px; /* permite encoger */
-  min-width: 45px;
-  max-width: 120px;
-}
-
-.food-remove-button {
-  background: none;
-  margin-bottom: 15px;
-  color: red;
-  flex-shrink: 0; /* evita que se encoja */
-}
-
-</style>
