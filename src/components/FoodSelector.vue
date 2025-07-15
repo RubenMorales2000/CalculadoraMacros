@@ -65,6 +65,7 @@ import type { FoodItem } from '../types/FoodItem'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
 import { NSelect} from 'naive-ui'
+import { getAuth } from "firebase/auth"
 
 interface SelectedFood {
   id: string
@@ -73,6 +74,8 @@ interface SelectedFood {
 
 const foods = ref<FoodItem[]>([])
 const selectedFoods = ref<SelectedFood[]>([{id:'', quantity:100}])
+const auth = getAuth()
+const user = auth.currentUser
 
 const totals = reactive({
   carbs: 0,
@@ -88,19 +91,23 @@ onMounted(async () => {
 })
 
 async function loadFoods() {
-  const querySnapshot = await getDocs(collection(db, "foods"))
-  foods.value = querySnapshot.docs.map(doc => {
-    const data = doc.data()
-    return {
-      id: doc.id,
-      name: data.name,
-      carbs: data.carbs,
-      protein: data.protein,
-      fat: data.fat,
-      saturatedFat: data.saturatedFat || 0,
-      calories: data.calories
-    } as FoodItem
-  })
+  if (user) {
+    const foodsRef = collection(db, "users", user.uid, "foods")
+
+    const querySnapshot = await getDocs(foodsRef)
+    foods.value = querySnapshot.docs.map(doc => {
+      const data = doc.data()
+      return {
+        id: doc.id,
+        name: data.name,
+        carbs: data.carbs,
+        protein: data.protein,
+        fat: data.fat,
+        saturatedFat: data.saturatedFat || 0,
+        calories: data.calories
+      } as FoodItem
+    })
+  }
 }
 
 function addFood() {

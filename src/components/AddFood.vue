@@ -99,6 +99,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import { db } from '../firebase'
 import { useNotification } from 'naive-ui'
+import { getAuth } from "firebase/auth"
 
 const fieldLabels: Record<string, string> = {
   carbs: 'Carbohidratos',
@@ -134,40 +135,56 @@ const foods = ref<Food[]>([])
 const showForm = ref(false)
 const editingFood = ref<Food | null>(null)
 const notification = useNotification()
+const auth = getAuth()
+const user = auth.currentUser
+
 
 onMounted(loadFoods)
 
 async function loadFoods() {
-  const snapshot = await getDocs(collection(db, "foods"))
-  foods.value = snapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  } as Food))
+  if(user){
+
+    const foodsRef = collection(db, "users", user.uid, "foods")
+    const snapshot = await getDocs(foodsRef)
+    
+    foods.value = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Food))
+  }
 }
 
 async function saveFood() {
   if (!newFood.name.trim()) {
-    notification.error({title:'Error', description:"El nombre es obligatorio.", duration:3000})
+    notification.error({ title: 'Error', description: "El nombre es obligatorio.", duration: 3000 })
+    return
+  }
+
+  if (!user) {
+    notification.error({ title: 'Error', description: "No hay usuario autenticado.", duration: 3000 })
     return
   }
 
   try {
     if (editingFood.value) {
-      const foodRef = doc(db, "foods", editingFood.value.id)
+      const foodRef = doc(db, "users", user.uid, "foods", editingFood.value.id)
       await updateDoc(foodRef, { ...newFood })
-      notification.success({title:'Guardado', description:`¡Alimento "${newFood.name}" actualizado!`, duration:3000})
-    } else {
-      await addDoc(collection(db, "foods"), { ...newFood })
-      notification.success({title:'Guardado', description:`¡Alimento "${newFood.name}" guardado correctamente!`, duration:3000})
+      notification.success({ title: 'Guardado', description: `¡Alimento "${newFood.name}" actualizado!`, duration: 3000 })
+    } 
+    else {
+      const foodsCollection = collection(db, "users", user.uid, "foods")
+      await addDoc(foodsCollection, { ...newFood })
+      notification.success({ title: 'Guardado', description: `¡Alimento "${newFood.name}" guardado correctamente!`, duration: 3000 })
     }
 
     cancelForm()
     await loadFoods()
   } 
   catch (error) {
-    notification.error({title:'Error', description:'Error guardando el ingrediente: ' + (error as Error).message, duration:3000})
+    notification.error({ title: 'Error', description: 'Error guardando el ingrediente: ' + (error as Error).message, duration: 3000 })
   }
 }
+
 
 function editFood(food: Food) {
   Object.assign(newFood, food)
@@ -182,17 +199,24 @@ function cancelForm() {
 }
 
 async function deleteFood(id: string) {
+  if (!user) {
+    notification.error({title:'Error', description:'No hay usuario autenticado.', duration:3000})
+    return
+  }
+
   if (confirm("¿Seguro que deseas eliminar este ingrediente?")) {
     try {
-      await deleteDoc(doc(db, "foods", id))
-      notification.success({title:'Alimento Eliminado', description:"Alimento eliminado correctamente", duration:3000})
+      const foodRef = doc(db, "users", user.uid, "foods", id)
+      await deleteDoc(foodRef)
+      notification.success({ title: 'Alimento Eliminado', description: "Alimento eliminado correctamente", duration: 3000 })
       await loadFoods()
     } 
     catch (error) {
-      notification.error({title:'Error', description:'Error eliminando el ingrediente: ' + (error as Error).message, duration:3000})
+      notification.error({ title: 'Error', description: 'Error eliminando el ingrediente: ' + (error as Error).message, duration: 3000 })
     }
   }
 }
+
 </script>
 
 
