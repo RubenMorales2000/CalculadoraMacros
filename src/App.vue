@@ -4,18 +4,23 @@
       <div v-if="loading" class="loading">Cargando...</div>
 
       <div v-else-if="user">
-        <div class="nav-buttons">
-          <button v-if="currentView === 'calculator'" @click="goToAddFood" class="switch-button">
-            ➕ Tu nevera
-          </button>
-          <button v-if="currentView === 'addFood'" @click="goToCalculator" class="switch-button">
-            🔙 Volver a calculadora
-          </button>
-          <button @click="logout" class="logout-button">Cerrar sesión</button>
-        </div>
+        <nav class="top-bar">
+          <div class="nav-title">🧮 Kalos </div>
+          <div class="nav-links">
+            <button :class="{ active: currentView === 'calculator' }" @click="currentView = 'calculator'">Calculadora</button>
+            <button :class="{ active: currentView === 'addFood' }" @click="currentView = 'addFood'">Tu nevera</button>
+            <button :class="{ active: currentView === 'recipes' }" @click="currentView = 'recipes'">Recetas</button>
+            <button :class="{ active: currentView === 'history' }" @click="currentView = 'history'">Objetivos</button>
+            <button @click="logout" class="logout-btn">Cerrar sesión</button>
+          </div>
+        </nav>
 
-        <MacroCalculator v-if="currentView === 'calculator'" />
-        <AddFood v-if="currentView === 'addFood'" />
+        <div class="view-container">
+          <MacroCalculator v-if="currentView === 'calculator'" />
+          <AddFood v-if="currentView === 'addFood'" />
+          <RecipesView v-if="currentView === 'recipes'"/>
+          <div v-if="currentView === 'history'">📈 Aquí van tus objetivos diarios</div>
+        </div>
       </div>
 
       <div v-else class="login-container">
@@ -29,11 +34,12 @@
 import { ref, onMounted } from 'vue'
 import MacroCalculator from './views/MacroCalculator.vue'
 import AddFood from './views/AddFood.vue'
+import RecipesView from './views/RecipesView.vue'
 import { NNotificationProvider } from 'naive-ui'
 import { loginWithGoogle, logout as logoutService, getCurrentUser } from './services/authService'
 import type { User } from 'firebase/auth'
 
-const currentView = ref<'calculator' | 'addFood'>('calculator')
+const currentView = ref<'calculator' | 'addFood' | 'recipes' | 'history'>('calculator')
 const user = ref<User | null>(null)
 const loading = ref(true)
 
@@ -42,19 +48,10 @@ onMounted(async () => {
   loading.value = false
 })
 
-function goToAddFood() {
-  currentView.value = 'addFood'
-}
-
-function goToCalculator() {
-  currentView.value = 'calculator'
-}
-
 async function login() {
   try {
     user.value = await loginWithGoogle()
-  } 
-  catch (error) {
+  } catch (error) {
     console.error(error)
   }
 }
@@ -62,15 +59,71 @@ async function login() {
 async function logout() {
   await logoutService()
   user.value = null
-  currentView.value = 'calculator' 
+  currentView.value = 'calculator'
 }
 </script>
 
 <style scoped>
 .app-container {
-  padding: 20px;
+  padding-top: 70px;
   margin: 0 auto;
-  max-width: 900px;
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: #3498db;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.nav-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.nav-links button {
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-links button:hover,
+.nav-links button.active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.logout-btn {
+  background-color: #e74c3c;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+.view-container {
+  padding: 20px;
 }
 
 .loading {
@@ -79,17 +132,12 @@ async function logout() {
   font-size: 18px;
 }
 
-.nav-buttons {
+.login-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
+  margin-top: 120px;
 }
 
-.switch-button,
-.logout-button,
 .login-button {
   background-color: #3498db;
   border: none;
@@ -101,15 +149,7 @@ async function logout() {
   transition: background-color 0.2s ease;
 }
 
-.switch-button:hover,
-.logout-button:hover,
 .login-button:hover {
   background-color: #2980b9;
-}
-
-.login-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 120px;
 }
 </style>
