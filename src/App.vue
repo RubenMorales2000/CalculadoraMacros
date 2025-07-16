@@ -105,6 +105,12 @@ async function logout() {
   padding: 6px 10px;
   border-radius: 4px;
   transition: background-color 0.2s;
+
+  flex: 1 1 0;
+  max-width: 15%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .nav-links button:hover,

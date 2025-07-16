@@ -33,7 +33,7 @@
               {{ getRecipeName(selectedRecipeId) || 'Seleccione una receta' }}
             </button>
           </template>
-          <p style="max-width: 400px;"> Elija una receta se su lista de recetas para añadir automáticamente todos sus ingredientes </p>
+          <p style="max-width: 30vw;"> Elija una receta se su lista de recetas para añadir automáticamente todos sus ingredientes </p>
           <n-select
           v-model:value="selectedRecipeId"
           :options="recipes"
