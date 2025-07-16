@@ -1,7 +1,8 @@
 <template>
   <div>
+    <!-- Lista actual de alimentos -->
     <div v-for="(_, index) in selectedFoods" class="food-entry" :key="index">
-     <n-select
+      <n-select
         v-model:value="selectedFoods[index].id"
         :options="foods"
         label-field="name"
@@ -10,14 +11,43 @@
         clearable
         placeholder="Elija nuevo alimento"
         class="ingredient-select"
-        @update:value="updateSelectedFood()"
+        @update:value="updateSelectedFood"
       />
-      <input type="number" min="0" v-model.number="selectedFoods[index].quantity" @input="calculateTotals" class="quantity-input">Gr</input>
+      <input
+        type="number"
+        min="0"
+        v-model.number="selectedFoods[index].quantity"
+        @input="calculateTotals"
+        class="quantity-input"
+      />Gr</input>
       <button @click="removeFood(index)" class="ingredient-remove">🗑️</button>
     </div>
 
-    <button @click="addFood" style="margin-top: 10px;">Añadir ingrediente</button>
-
+    <div style="display: flex; justify-content: center; gap: 0.9rem; margin-top: 10px;">
+      <button @click="addFood">Añadir ingrediente</button>
+      <!-- Selector de recetas con botón y popup -->
+      <div>
+        <n-popover trigger="click">
+          <template #trigger>
+            <button class="recipe-button">
+              {{ getRecipeName(selectedRecipeId) || 'Seleccione una receta' }}
+            </button>
+          </template>
+          <p style="max-width: 400px;"> Elija una receta se su lista de recetas para añadir automáticamente todos sus ingredientes </p>
+          <n-select
+          v-model:value="selectedRecipeId"
+          :options="recipes"
+          label-field="name"
+          value-field="id"
+          placeholder="Seleccione una receta"
+          clearable
+          @update:value="onRecipeSelected"
+          style="min-width: 200px"
+          />
+        </n-popover>
+      </div>
+    </div>
+      
     <h3>Macros totales:</h3>
     <p>Carbohidratos: {{ totals.carbs.toFixed(2) }} g</p>
     <p>Proteínas: {{ totals.protein.toFixed(2) }} g</p>
@@ -27,53 +57,27 @@
   </div>
 </template>
 
-<style scoped>
-.food-entry {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-bottom: 5px;
-  flex-wrap: nowrap; 
-  overflow: hidden;
-}
-
-.ingredient-select {
-  font-size: 14px;
-  flex: 1 1 150px; 
-  max-width: 500px;
-}
-
-.quantity-input {
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  flex: 0 1 50px; 
-}
-
-.ingredient-remove {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-</style>
-
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
 import type { FoodItem } from '../types/FoodItem'
 import { db } from '../firebase'
 import { collection, getDocs } from 'firebase/firestore'
-import { NSelect} from 'naive-ui'
-import { getAuth } from "firebase/auth"
+import { NSelect, NPopover } from 'naive-ui'
+import { getAuth } from 'firebase/auth'
 
 interface SelectedFood {
   id: string
   quantity: number
 }
 
+interface Recipe {
+  id: string
+  name: string
+  ingredients: { id: string; quantity: number }[]
+}
+
 const foods = ref<FoodItem[]>([])
-const selectedFoods = ref<SelectedFood[]>([{id:'', quantity:100}])
+const selectedFoods = ref<SelectedFood[]>([{ id: '', quantity: 100 }])
 const auth = getAuth()
 const user = auth.currentUser
 
@@ -85,15 +89,18 @@ const totals = reactive({
   calories: 0
 })
 
+const recipes = ref<Recipe[]>([])
+const selectedRecipeId = ref<string | null>(null)
+
 onMounted(async () => {
   await loadFoods()
+  await loadRecipes()
   calculateTotals()
 })
 
 async function loadFoods() {
   if (user) {
-    const foodsRef = collection(db, "users", user.uid, "foods")
-
+    const foodsRef = collection(db, 'users', user.uid, 'foods')
     const querySnapshot = await getDocs(foodsRef)
     foods.value = querySnapshot.docs.map(doc => {
       const data = doc.data()
@@ -110,12 +117,27 @@ async function loadFoods() {
   }
 }
 
-function addFood() {
-  selectedFoods.value.push({id:'', quantity:100})
+async function loadRecipes() {
+  if (user) {
+    const recipesRef = collection(db, 'users', user.uid, 'recipes')
+    const querySnapshot = await getDocs(recipesRef)
+    recipes.value = querySnapshot.docs.map(doc => {
+      const data = doc.data()
+      return {
+        id: doc.id,
+        name: data.name,
+        ingredients: data.ingredients || []
+      } as Recipe
+    })
+  }
 }
 
-function removeFood(index:number) {
-  selectedFoods.value.splice(index,1)
+function addFood() {
+  selectedFoods.value.push({ id: '', quantity: 100 })
+}
+
+function removeFood(index: number) {
+  selectedFoods.value.splice(index, 1)
   calculateTotals()
 }
 
@@ -142,5 +164,59 @@ function calculateTotals() {
     }
   })
 }
+
+function onRecipeSelected(recipeId: string | null) {
+  if (!recipeId) return
+
+  const recipe = recipes.value.find(r => r.id === recipeId)
+  if (!recipe) return
+
+  recipe.ingredients.forEach((ingredient:any) => {
+    selectedFoods.value.push({ id: ingredient.foodId, quantity: ingredient.amount })
+  })
+
+  calculateTotals()
+  selectedRecipeId.value = null
+}
+
+function getRecipeName(id: string | null): string | null {
+  const recipe = recipes.value.find(r => r.id === id)
+  return recipe ? recipe.name : null
+}
 </script>
 
+<style scoped>
+.food-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 5px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.ingredient-select {
+  font-size: 14px;
+  flex: 1 1 150px;
+  max-width: 500px;
+}
+
+.quantity-input {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  flex: 0 1 50px;
+}
+
+.ingredient-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.recipe-button {
+  cursor: pointer;
+}
+</style>

@@ -7,10 +7,10 @@
         <nav class="top-bar">
           <div class="nav-title">🧮 Kalos </div>
           <div class="nav-links">
-            <button :class="{ active: currentView === 'calculator' }" @click="currentView = 'calculator'">Calculadora</button>
-            <button :class="{ active: currentView === 'addFood' }" @click="currentView = 'addFood'">Tu nevera</button>
-            <button :class="{ active: currentView === 'recipes' }" @click="currentView = 'recipes'">Recetas</button>
-            <button :class="{ active: currentView === 'history' }" @click="currentView = 'history'">Objetivos</button>
+            <button :class="{active:currentView === 'calculator' }" @click="currentView = 'calculator'">Calculadora</button>
+            <button :class="{active:currentView === 'addFood' }" @click="currentView = 'addFood'">Tu nevera</button>
+            <button :class="{active:currentView === 'recipes' }" @click="currentView = 'recipes'">Recetas</button>
+            <button :class="{active:currentView === 'history' }" @click="currentView = 'history'">Objetivos</button>
             <button @click="logout" class="logout-btn">Cerrar sesión</button>
           </div>
         </nav>
@@ -92,7 +92,7 @@ async function logout() {
 
 .nav-links {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 }
 
