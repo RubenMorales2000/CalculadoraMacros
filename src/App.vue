@@ -5,7 +5,8 @@
 
       <div v-else-if="user">
         <nav class="top-bar">
-          <div class="nav-title">🧮 Kalos </div>
+          <img src="/public/logo.png" alt="Kalos Logo" style="width:40px; height: auto;">
+          <div class="nav-title"> Kalos </div>
           <div class="nav-links">
             <button :class="{active:currentView === 'calculator' }" @click="currentView = 'calculator'">Calculadora</button>
             <button :class="{active:currentView === 'addFood' }" @click="currentView = 'addFood'">Tu nevera</button>
@@ -23,7 +24,9 @@
         </div>
       </div>
 
-      <div v-else class="login-container">
+      <div v-else>
+        <img src="/public/logo.png" alt="Kalos Logo" style="width:100px; height: auto; margin:20px;">
+        <h2>¡Bienvenido a Kalos!</h2>
         <button @click="login" class="login-button">Iniciar sesión con Google</button>
       </div>
     </div>
@@ -65,12 +68,15 @@ async function logout() {
 
 <style scoped>
 .app-container {
-  padding-top: 70px;
   margin: 0 auto;
+  background: #1e1e1e;
+  font-family: system-ui, sans-serif;
+  color: white;
+  height: 100vh;
 }
 
 .top-bar {
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -88,6 +94,9 @@ async function logout() {
 .nav-title {
   font-size: 18px;
   font-weight: bold;
+  flex: 1;
+  text-align: left;
+  margin-left: 10px;
 }
 
 .nav-links {
@@ -107,7 +116,7 @@ async function logout() {
   transition: background-color 0.2s;
 
   flex: 1 1 0;
-  max-width: 15%;
+  max-width: 18vw;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -138,12 +147,6 @@ async function logout() {
   font-size: 18px;
 }
 
-.login-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 120px;
-}
-
 .login-button {
   background-color: #3498db;
   border: none;
@@ -153,6 +156,7 @@ async function logout() {
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.2s ease;
+  margin-top: 120px;
 }
 
 .login-button:hover {

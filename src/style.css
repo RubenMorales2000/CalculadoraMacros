@@ -56,14 +56,6 @@ h1 {
   }
 }
 
-/* Contenedor principal de la app */
-.app-container {
-  background: #1e1e1e;
-  font-family: system-ui, sans-serif;
-  color: white;
-  height: 100vh;
-}
-
 /* Título principal */
 h2 {
   text-align: center;
