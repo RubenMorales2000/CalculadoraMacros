@@ -11,8 +11,8 @@
             <button :class="{active:currentView === 'calculator'}" @click="currentView = 'calculator'"><i class="fas fa-calculator"></i></button>
             <button :class="{active:currentView === 'addFood' }"   @click="currentView = 'addFood'"><i class="fas fa-apple-alt"></i></button>
             <button :class="{active:currentView === 'recipes' }"   @click="currentView = 'recipes'"><i class="fas fa-utensils"></i></button>
-            <button :class="{active:currentView === 'history' }"   @click="currentView = 'history'"><i class="fas fa-bullseye"></i></button>
-            <button @click="logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            <button :class="{active:currentView === 'history' }"   @click="currentView = 'history'"><i class="fas fa-weight-scale"></i></button>
+            <button @click="logout" class="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i></button>
           </div>
         </nav>
 
@@ -109,14 +109,14 @@ async function logout() {
   background: transparent;
   color: white;
   border: none;
-  font-size: 14px;
+  font-size: 22px;
   cursor: pointer;
   padding: 6px 10px;
   border-radius: 4px;
   transition: background-color 0.2s;
 
   flex: 1 1 0;
-  max-width: 18vw;
+  max-width: 25vw;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

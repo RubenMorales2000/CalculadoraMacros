@@ -13,6 +13,12 @@
         </li>
       </ul>
       <button @click="showForm = true">➕ Añadir nuevo ingrediente</button>
+      <button @click="startScanner">📷 Escanear EAN</button>
+
+      <div v-if="scanning" style="margin-top: 1rem;">
+        <div id="scanner" style="width: 300px; margin: auto;"></div>
+        <button @click="stopScanner">❌ Cancelar escaneo</button>
+      </div>
     </div>
 
     <div v-else>
@@ -100,6 +106,7 @@ import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase
 import { db } from '../firebase'
 import { useNotification } from 'naive-ui'
 import { getAuth } from "firebase/auth"
+import { Html5Qrcode } from "html5-qrcode"
 
 const fieldLabels: Record<string, string> = {
   carbs: 'Carbohidratos',
@@ -137,7 +144,8 @@ const editingFood = ref<Food | null>(null)
 const notification = useNotification()
 const auth = getAuth()
 const user = auth.currentUser
-
+const scanning = ref(false)
+let html5QrCode: Html5Qrcode | null = null
 
 onMounted(loadFoods)
 
@@ -217,6 +225,61 @@ async function deleteFood(id: string) {
   }
 }
 
+async function startScanner() {
+  scanning.value = true
+  html5QrCode = new Html5Qrcode("scanner")
+  const config = { fps: 10, qrbox: 250 }
+
+  try {
+    await html5QrCode.start(
+      { facingMode: "environment" },
+      config,
+      async (eanCode: string) => {
+        await html5QrCode?.stop()
+        scanning.value = false
+        fetchFoodByEAN(eanCode)
+      },
+      errorMessage => {
+        // Ignora errores menores
+        console.warn(errorMessage)
+      }
+    )
+  } catch (err) {
+    scanning.value = false
+    notification.error({ title: 'Error', description: 'No se pudo iniciar el escáner.', duration: 3000 })
+  }
+}
+
+async function stopScanner() {
+  scanning.value = false
+  await html5QrCode?.stop()
+}
+
+async function fetchFoodByEAN(ean: string) {
+  try {
+    const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${ean}.json`)
+    const data = await response.json()
+
+    if (data.status === 1) {
+      const p = data.product
+      newFood.name = p.product_name || 'Producto sin nombre'
+      newFood.carbs = p.nutriments.carbohydrates_100g ?? 0
+      newFood.protein = p.nutriments.proteins_100g ?? 0
+      newFood.fat = p.nutriments.fat_100g ?? 0
+      newFood.saturatedFat = p.nutriments['saturated-fat_100g'] ?? 0
+      newFood.calories = p.nutriments['energy-kcal_100g'] ?? 0
+
+      showForm.value = true
+      editingFood.value = null
+
+      notification.success({ title: 'Producto encontrado', description: `Se ha cargado: ${newFood.name}`, duration: 3000 })
+    } else {
+      notification.error({ title: 'No encontrado', description: `No se encontró producto con EAN ${ean}`, duration: 3000 })
+    }
+  } catch (error) {
+    notification.error({ title: 'Error', description: 'No se pudo obtener información del producto.', duration: 3000 })
+  }
+}
 </script>
 
 
