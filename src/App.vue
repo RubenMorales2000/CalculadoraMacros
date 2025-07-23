@@ -8,11 +8,11 @@
           <img src="/public/logo.png" alt="Kalos Logo" style="width:40px; height: auto;">
           <div class="nav-title"> Kalos </div>
           <div class="nav-links">
-            <button :class="{active:currentView === 'calculator' }" @click="currentView = 'calculator'">Calculadora</button>
-            <button :class="{active:currentView === 'addFood' }" @click="currentView = 'addFood'">Tu nevera</button>
-            <button :class="{active:currentView === 'recipes' }" @click="currentView = 'recipes'">Recetas</button>
-            <button :class="{active:currentView === 'history' }" @click="currentView = 'history'">Objetivos</button>
-            <button @click="logout" class="logout-btn">Cerrar sesión</button>
+            <button :class="{active:currentView === 'calculator'}" @click="currentView = 'calculator'"><i class="fas fa-calculator"></i></button>
+            <button :class="{active:currentView === 'addFood' }"   @click="currentView = 'addFood'"><i class="fas fa-apple-alt"></i></button>
+            <button :class="{active:currentView === 'recipes' }"   @click="currentView = 'recipes'"><i class="fas fa-utensils"></i></button>
+            <button :class="{active:currentView === 'history' }"   @click="currentView = 'history'"><i class="fas fa-bullseye"></i></button>
+            <button @click="logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
           </div>
         </nav>
 
