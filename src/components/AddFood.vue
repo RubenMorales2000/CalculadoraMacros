@@ -15,10 +15,12 @@
       <button @click="showForm = true">➕ Añadir nuevo ingrediente</button>
       <button @click="startScanner">📷 Escanear EAN</button>
 
-      <div v-if="scanning" style="margin-top: 1rem;">
-        <div id="scanner" style="width: 300px; margin: auto;"></div>
-        <button @click="stopScanner">❌ Cancelar escaneo</button>
+     <n-modal v-model:show="scanning" preset="dialog" title="Escanear código EAN" style="width: 350px;">
+      <div id="scanner" style="width: 300px; height: 300px; margin: auto;"></div>
+      <div style="text-align: center; margin-top: 1rem;">
+        <button @click="stopScanner">❌ Cancelar</button>
       </div>
+    </n-modal>
     </div>
 
     <div v-else>
@@ -101,13 +103,14 @@
 </style>
 
 <script lang="ts" setup>
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref, onMounted, nextTick } from 'vue'
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "firebase/firestore"
 import { db } from '../firebase'
-import { useNotification } from 'naive-ui'
+import { useNotification, NModal } from 'naive-ui'
 import { getAuth } from "firebase/auth"
 import { Html5Qrcode } from "html5-qrcode"
 
+//#region *****************************************   Variables   *****************************************
 const fieldLabels: Record<string, string> = {
   carbs: 'Carbohidratos',
   protein: 'Proteínas',
@@ -146,30 +149,26 @@ const auth = getAuth()
 const user = auth.currentUser
 const scanning = ref(false)
 let html5QrCode: Html5Qrcode | null = null
+//#endregion **********************************************************************************************
 
 onMounted(loadFoods)
 
 async function loadFoods() {
   if(user){
-
     const foodsRef = collection(db, "users", user.uid, "foods")
     const snapshot = await getDocs(foodsRef)
-    
-    foods.value = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    } as Food))
+    foods.value = snapshot.docs.map(doc => ({id: doc.id,...doc.data()} as Food))
   }
 }
 
 async function saveFood() {
   if (!newFood.name.trim()) {
-    notification.error({ title: 'Error', description: "El nombre es obligatorio.", duration: 3000 })
+    notification.error({title:'Error', description:"El nombre es obligatorio.", duration:3000})
     return
   }
 
   if (!user) {
-    notification.error({ title: 'Error', description: "No hay usuario autenticado.", duration: 3000 })
+    notification.error({title: 'Error', description:"No hay usuario autenticado.", duration:3000})
     return
   }
 
@@ -177,22 +176,21 @@ async function saveFood() {
     if (editingFood.value) {
       const foodRef = doc(db, "users", user.uid, "foods", editingFood.value.id)
       await updateDoc(foodRef, { ...newFood })
-      notification.success({ title: 'Guardado', description: `¡Alimento "${newFood.name}" actualizado!`, duration: 3000 })
+      notification.success({title: 'Guardado', description:`¡Alimento "${newFood.name}" actualizado!`, duration:3000})
     } 
     else {
       const foodsCollection = collection(db, "users", user.uid, "foods")
       await addDoc(foodsCollection, { ...newFood })
-      notification.success({ title: 'Guardado', description: `¡Alimento "${newFood.name}" guardado correctamente!`, duration: 3000 })
+      notification.success({title: 'Guardado', description:`¡Alimento "${newFood.name}" guardado correctamente!`, duration:3000})
     }
 
     cancelForm()
     await loadFoods()
   } 
-  catch (error) {
-    notification.error({ title: 'Error', description: 'Error guardando el ingrediente: ' + (error as Error).message, duration: 3000 })
+  catch (error:any) {
+    notification.error({title:'Error', description:'Error guardando el ingrediente: ' + error, duration:3000})
   }
 }
-
 
 function editFood(food: Food) {
   Object.assign(newFood, food)
@@ -201,7 +199,7 @@ function editFood(food: Food) {
 }
 
 function cancelForm() {
-  Object.assign(newFood, { name: '', carbs: 0, protein: 0, fat: 0, saturatedFat: 0, calories: 0 })
+  Object.assign(newFood, {name:'', carbs:0, protein:0, fat:0, saturatedFat:0, calories:0})
   showForm.value = false
   editingFood.value = null
 }
@@ -225,9 +223,15 @@ async function deleteFood(id: string) {
   }
 }
 
+//#region *****************************************   Scanner   *****************************************
 async function startScanner() {
   scanning.value = true
-  html5QrCode = new Html5Qrcode("scanner")
+  await nextTick()
+
+  if (!html5QrCode) {
+    html5QrCode = new Html5Qrcode("scanner")
+  }
+
   const config = { fps: 10, qrbox: 250 }
 
   try {
@@ -240,19 +244,20 @@ async function startScanner() {
         fetchFoodByEAN(eanCode)
       },
       errorMessage => {
-        // Ignora errores menores
-        console.warn(errorMessage)
+        console.warn("Escaneo fallido:", errorMessage)
       }
     )
-  } catch (err) {
+  } catch (err:any) {
     scanning.value = false
-    notification.error({ title: 'Error', description: 'No se pudo iniciar el escáner.', duration: 3000 })
+    notification.error({title:'Error', description:'No se pudo iniciar el escáner: ' + err, duration:3000})
   }
 }
 
 async function stopScanner() {
   scanning.value = false
-  await html5QrCode?.stop()
+  if (html5QrCode?.isScanning) {
+    await html5QrCode.stop()
+  }
 }
 
 async function fetchFoodByEAN(ean: string) {
@@ -272,14 +277,15 @@ async function fetchFoodByEAN(ean: string) {
       showForm.value = true
       editingFood.value = null
 
-      notification.success({ title: 'Producto encontrado', description: `Se ha cargado: ${newFood.name}`, duration: 3000 })
+      notification.success({title:'Producto encontrado', description:`Se ha cargado: ${newFood.name}`, duration:3000})
     } else {
-      notification.error({ title: 'No encontrado', description: `No se encontró producto con EAN ${ean}`, duration: 3000 })
+      notification.error({title:'No encontrado', description:`No se encontró producto con EAN ${ean}`, duration:3000})
     }
-  } catch (error) {
-    notification.error({ title: 'Error', description: 'No se pudo obtener información del producto.', duration: 3000 })
+  } catch (error:any) {
+    notification.error({title:'Error', description:'No se pudo obtener información del producto:' + error, duration:3000})
   }
 }
+//#endregion *******************************************************************************************
 </script>
 
 
