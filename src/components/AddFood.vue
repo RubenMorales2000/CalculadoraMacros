@@ -17,8 +17,7 @@
 
      <n-modal v-model:show="scanning" @onClose="stopScanner" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
       <div id="scanner" style="width: 75vw; height: 60vh; margin: auto;"></div>
-      <div style="text-align: center; margin-top: 1rem;">
-      </div>
+
     </n-modal>
     </div>
 
