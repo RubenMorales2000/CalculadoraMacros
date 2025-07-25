@@ -15,10 +15,9 @@
       <button @click="showForm = true">➕ Añadir nuevo ingrediente</button>
       <button @click="startScanner">📷 Escanear EAN</button>
 
-     <n-modal v-model:show="scanning" preset="dialog" title="Escanear código EAN" style="width: 350px;">
-      <div id="scanner" style="width: 300px; height: 300px; margin: auto;"></div>
+     <n-modal v-model:show="scanning" @onClose="stopScanner" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
+      <div id="scanner" style="width: 75vw; height: 60vh; margin: auto;"></div>
       <div style="text-align: center; margin-top: 1rem;">
-        <button @click="stopScanner">❌ Cancelar</button>
       </div>
     </n-modal>
     </div>
