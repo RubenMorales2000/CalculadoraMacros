@@ -176,11 +176,6 @@ function onRecipeSelected(recipeId: string | null) {
   calculateTotals()
   selectedRecipeId.value = null
 }
-
-function getRecipeName(id: string | null): string | null {
-  const recipe = recipes.value.find(r => r.id === id)
-  return recipe ? recipe.name : null
-}
 </script>
 
 <style scoped>
