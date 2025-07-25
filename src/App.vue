@@ -104,28 +104,26 @@ async function logout() {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   z-index: 1000;
 }
-
 .left-section {
   display: flex;
   align-items: center;
 }
-
 .app-name {
   font-size: 20px;
   font-weight: bold;
   margin-left: 8px;
   pointer-events: none;
 }
-
 .center-title {
-  position: absolute;
-  margin-top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 28px;
+  margin-left: auto;
+  white-space: nowrap;        
+  font-size: 2.5vh;
   font-weight: 600;
   color: #ccc;
   pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;   
+  padding-right: 10px;
 }
 /*************************************************/
 
