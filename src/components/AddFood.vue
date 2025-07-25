@@ -12,30 +12,23 @@
             <button class="food-action" @click="deleteFood(food.id)">🗑️</button>
         </li>
       </ul>
-      <button @click="showForm = true">➕ Añadir nuevo ingrediente</button>
-      <button @click="startScanner">📷 Escanear EAN</button>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+        <button @click="showForm = true"><i class="fa-solid fa-plus"> Registrar </i></button>
+        <button @click="startScanner"><i class="fa-solid fa-barcode"> Escanear </i></button>
+      </div>
 
-     <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
-      <div id="scanner" style=" margin: auto;"></div>
-
-    </n-modal>
+      <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
+        <div id="scanner" style=" margin: auto;"></div>
+      </n-modal>
     </div>
 
     <div v-else>
-      <h2>{{ editingFood ? 'Editar ingrediente' : 'Añadir ingrediente' }}</h2>
+      <h2>{{ editingFood ? 'Editar ingrediente' : 'Registrar ingrediente' }}</h2>
       <form @submit.prevent="saveFood">
         <input class="nombre-ingrediente" placeholder="Nombre" v-model="newFood.name" required />
         <div class="form-group" v-for="field in ['carbs', 'protein', 'fat', 'saturatedFat', 'calories']" :key="field">
           <label :for="field" class="foodInput-label">{{ fieldLabels[field] }}:</label>
-          <input
-            class="newFoodInput"
-            :id="field"
-            type="number"
-            v-model.number="(newFood as any)[field]"
-            min="0"
-            step="0.1"
-            required
-          />
+          <input class="newFoodInput" :id="field" type="number" v-model.number="(newFood as any)[field]" min="0" step="0.1" required/>
         </div>
         
         <div style="display: flex; justify-content: center; gap: 0.5rem;">
@@ -44,6 +37,7 @@
         </div>
       </form>
     </div>
+
   </div>
 </template>
 
