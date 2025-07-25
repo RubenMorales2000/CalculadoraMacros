@@ -1,7 +1,5 @@
 <template>
   <div class="recetas-container">
-    <h2>Crear Receta</h2>
-
     <div class="form-group">
       <label for="recipe-name">Nombre de la receta:</label>
       <input v-model="recipeName" id="recipe-name" type="text" />

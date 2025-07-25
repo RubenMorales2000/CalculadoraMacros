@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
-    <h2 v-if="!showForm">{{ editingFood ? 'Editar ingrediente' : 'Lista de ingredientes' }}</h2>
-
+    <!-- Mostrar formulario o lista de alimentos -->
     <div v-if="!showForm" class="food-list">
       <ul style="margin-block-start: 0.5em; margin-block-end: 1em; padding-inline-start: 2px; ">
         <li v-for="food in foods" :key="food.id" class="food-item">
@@ -12,11 +11,12 @@
             <button class="food-action" @click="deleteFood(food.id)">🗑️</button>
         </li>
       </ul>
+      <!-- Botones para añadir o escanear -->
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-        <button @click="showForm = true"><i class="fa-solid fa-plus"> Registrar </i></button>
-        <button @click="startScanner"><i class="fa-solid fa-barcode"> Escanear </i></button>
+        <button class="action-button" @click="showForm = true"><i class="fa-solid fa-plus"> Registrar </i></button>
+        <button class="action-button" @click="startScanner"><i class="fa-solid fa-barcode"> Escanear </i></button>
       </div>
-
+      <!-- Modal para escanear código EAN -->
       <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
         <div id="scanner" style=" margin: auto;"></div>
       </n-modal>
@@ -91,6 +91,12 @@
 .newFoodInput{
   width: 100px;
   max-width: 10vw;
+}
+
+.action-button {
+  cursor: pointer;
+  background: none;
+  color: #3498db;
 }
 </style>
 

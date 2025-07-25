@@ -23,27 +23,25 @@
       <button @click="removeFood(index)" class="ingredient-remove">🗑️</button>
     </div>
 
-    <div style="display: flex; justify-content: center; gap: 0.9rem; margin-top: 10px;">
-      <button @click="addFood">Añadir ingrediente</button>
+    <div style="display: flex; justify-content: center; gap: 1.0rem; margin-top: 10px;">
+      <button class="action-button" @click="addFood"><i class="fa-solid fa-bowl-rice"></i> Añadir Ingrediente </button>
       <!-- Selector de recetas con botón y popup -->
       <div>
         <n-popover trigger="click">
           <template #trigger>
-            <button class="recipe-button">
-              {{ getRecipeName(selectedRecipeId) || 'Seleccione una receta' }}
-            </button>
+            <button class="action-button"><i class="fa-solid fa-magnifying-glass-plus"></i> Añadir Receta </button>
           </template>
           <p style="max-width: 30vw;"> Elija una receta se su lista de recetas para añadir automáticamente todos sus ingredientes </p>
           <n-select
-          v-model:value="selectedRecipeId"
-          :options="recipes"
-          label-field="name"
-          value-field="id"
-          placeholder="Seleccione una receta"
-          clearable
-          @update:value="onRecipeSelected"
-          style="min-width: 200px"
-          />
+            v-model:value="selectedRecipeId"
+            :options="recipes"
+            label-field="name"
+            value-field="id"
+            placeholder="Seleccione una receta"
+            clearable
+            @update:value="onRecipeSelected"
+            style="min-width: 200px"
+            />
         </n-popover>
       </div>
     </div>
@@ -216,7 +214,9 @@ function getRecipeName(id: string | null): string | null {
   font-size: 1rem;
 }
 
-.recipe-button {
+.action-button {
   cursor: pointer;
+  background: none;
+  color: #3498db;
 }
 </style>
