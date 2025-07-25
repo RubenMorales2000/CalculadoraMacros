@@ -15,8 +15,8 @@
       <button @click="showForm = true">➕ Añadir nuevo ingrediente</button>
       <button @click="startScanner">📷 Escanear EAN</button>
 
-     <n-modal v-model:show="scanning" @onClose="stopScanner" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
-      <div id="scanner" style="width: 75vw; height: 60vh; margin: auto;"></div>
+     <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
+      <div id="scanner" style=" margin: auto;"></div>
 
     </n-modal>
     </div>
@@ -250,6 +250,13 @@ async function startScanner() {
     notification.error({title:'Error', description:'No se pudo iniciar el escáner: ' + err, duration:3000})
   }
 }
+
+const handleShowUpdate = (value: boolean) => {
+  scanning.value = value;
+  if (!value) {
+    stopScanner();
+  }
+};
 
 async function stopScanner() {
   scanning.value = false
