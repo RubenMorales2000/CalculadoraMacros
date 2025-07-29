@@ -93,6 +93,9 @@ const selectedRecipeId = ref<string | null>(null)
 onMounted(async () => {
   await loadFoods()
   await loadRecipes()
+  let storedFoods = localStorage.getItem('selectedFoods'+new Date().toISOString().split('T')[0])
+  console.log(storedFoods)
+  selectedFoods.value = (storedFoods ? JSON.parse(storedFoods) : [{ id: '', quantity: 100 }])
   calculateTotals()
 })
 
@@ -161,6 +164,9 @@ function calculateTotals() {
       totals.calories += food.calories * factor
     }
   })
+
+  // Guardar en localStorage
+  localStorage.setItem('selectedFoods'+new Date().toISOString().split('T')[0], JSON.stringify(selectedFoods.value))
 }
 
 function onRecipeSelected(recipeId: string | null) {
