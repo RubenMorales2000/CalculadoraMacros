@@ -18,7 +18,7 @@
           <MacroCalculator v-if="currentView === 'calculator'" />
           <AddFood v-if="currentView === 'addFood'" />
           <RecipesView v-if="currentView === 'recipes'" />
-          <div v-if="currentView === 'objetives'">📈 Aquí van tus objetivos diarios</div>
+          <ObjectivesView v-if="currentView === 'objetives'"/>
         </div>
 
         <!-- Barra inferior -->
@@ -45,6 +45,7 @@ import { ref, onMounted, computed  } from 'vue'
 import MacroCalculator from './views/MacroCalculator.vue'
 import AddFood from './views/AddFood.vue'
 import RecipesView from './views/RecipesView.vue'
+import ObjectivesView from './views/ObjectivesView.vue'
 import { NNotificationProvider } from 'naive-ui'
 import { loginWithGoogle, logout as logoutService, getCurrentUser } from './services/authService'
 import type { User } from 'firebase/auth'
@@ -109,7 +110,7 @@ async function logout() {
   align-items: center;
 }
 .app-name {
-  font-size: 20px;
+  font-size: 1.7rem;
   font-weight: bold;
   margin-left: 8px;
   pointer-events: none;
@@ -117,7 +118,7 @@ async function logout() {
 .center-title {
   margin-left: auto;
   white-space: nowrap;        
-  font-size: 2.5vh;
+  font-size: 1.7rem;
   font-weight: 600;
   color: #ccc;
   pointer-events: none;
@@ -153,7 +154,7 @@ async function logout() {
   background: transparent;
   color: white;
   border: none;
-  font-size: 22px;
+  font-size: 1.8rem;
   cursor: pointer;
   padding: 6px 10px;
   border-radius: 4px;
@@ -178,7 +179,7 @@ async function logout() {
 .loading {
   text-align: center;
   margin-top: 100px;
-  font-size: 18px;
+  font-size: 2rem;
 }
 
 .login-button {
@@ -188,7 +189,7 @@ async function logout() {
   padding: 10px 16px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 1.2rem;
   transition: background-color 0.2s ease;
   margin-top: 120px;
 }

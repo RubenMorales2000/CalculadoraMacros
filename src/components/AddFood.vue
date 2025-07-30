@@ -13,8 +13,8 @@
       </ul>
       <!-- Botones para añadir o escanear -->
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-        <button class="action-button" @click="showForm = true"><i class="fa-solid fa-plus"> Registrar </i></button>
-        <button class="action-button" @click="startScanner"><i class="fa-solid fa-barcode"> Escanear </i></button>
+        <button class="action-button" style="font-size: 1.3rem" @click="showForm = true"><i class="fa-solid fa-plus"></i> Registrar </button>
+        <button class="action-button" style="font-size: 1.3rem" @click="startScanner"><i class="fa-solid fa-barcode"></i> Escanear </button>
       </div>
       <!-- Modal para escanear código EAN -->
       <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
@@ -32,8 +32,8 @@
         </div>
         
         <div style="display: flex; justify-content: center; gap: 0.5rem;">
-          <button type="button" @click="cancelForm">Cancelar</button>
-          <button type="submit">Guardar</button>
+          <button type="button" class="cancel-btn" @click="cancelForm"><i class="fa-solid fa-xmark"></i> Cancelar </button>
+          <button type="submit" class="save-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar </button>
         </div>
       </form>
     </div>
@@ -91,12 +91,6 @@
 .newFoodInput{
   width: 100px;
   max-width: 10vw;
-}
-
-.action-button {
-  cursor: pointer;
-  background: none;
-  color: #3498db;
 }
 </style>
 

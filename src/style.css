@@ -116,5 +116,39 @@ p {
   font-style: italic;
 }
 
+.action-button {
+  cursor: pointer;
+  background: none;
+  color: #3498db;
+}
 
+.save-btn {
+  margin-top: 12px;
+  padding: 8px 14px;
+  background: none;
+  color: rgb(16, 212, 75);
+  border: 1px solid rgb(16, 212, 75);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background-color: #afe9c0;
+}
+
+.cancel-btn {
+  margin-top: 12px;
+  margin-right: 12px;
+  margin-left: 12px;
+  padding: 8px 14px;
+  background: none;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background-color: #eabebe;
+}
 

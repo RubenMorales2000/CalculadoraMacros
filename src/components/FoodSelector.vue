@@ -196,7 +196,7 @@ function onRecipeSelected(recipeId: string | null) {
 }
 
 .ingredient-select {
-  font-size: 14px;
+  font-size: 1rem;
   flex: 1 1 150px;
   max-width: 500px;
 }
@@ -204,7 +204,7 @@ function onRecipeSelected(recipeId: string | null) {
 .quantity-input {
   border-radius: 4px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 1rem;
   flex: 0 1 50px;
 }
 
@@ -213,11 +213,5 @@ function onRecipeSelected(recipeId: string | null) {
   border: none;
   cursor: pointer;
   font-size: 1rem;
-}
-
-.action-button {
-  cursor: pointer;
-  background: none;
-  color: #3498db;
 }
 </style>
