@@ -2,7 +2,7 @@
   <NNotificationProvider placement="top">
     <div class="app-container">
       <div v-if="loading" class="loading">Cargando...</div>
-
+      <!-- Si el usuario tiene la sesión iniciada -->
       <div v-else-if="user">
         <!-- Barra superior -->
         <nav class="top-bar" aria-label="Barra superior de navegación">
@@ -10,7 +10,7 @@
             <img src="/public/logo.png" alt="Kalos Logo" style="width:10vh; max-width:40px; height:auto;">
             <div class="app-name">Kalos</div>
           </div>
-          <div class="center-title">{{ viewTitle }}</div>
+          <div class="page-title">{{ viewTitle }}</div>
         </nav>
 
         <!-- Contenido de la vista -->
@@ -30,11 +30,13 @@
           <button @click="logout" class="logout-btn"><i class="fas fa-arrow-right-from-bracket"></i></button>
         </nav>
       </div>
-
+      
+      <!-- Si el usuario no ha iniciado sesión  --> 
       <div v-else>
-        <img src="/public/logo.png" alt="Kalos Logo" style="width:100px; height: auto; margin:20px;">
-        <h2>¡Bienvenido a Kalos!</h2>
-        <button @click="login" class="login-button">Iniciar sesión con Google</button>
+        <img src="/public/logo.png" alt="Kalos Logo" style="width:6vw; height:auto; margin-top:8rem;">
+        <h2> ¡Bienvenido a Kalos! </h2>
+        <h3 style="margin-top:5rem;"> Inicie sesión para poder empezar a usar la aplicación </h3>
+        <button @click="login" class="login-button"> Iniciar sesión con Google </button>
       </div>
     </div>
   </NNotificationProvider>
@@ -85,22 +87,33 @@ async function logout() {
 </script>
 
 <style scoped>
+/* #region ***********  Contenedores  **************/
 .app-container {
   margin: 0 auto;
   background: #1e1e1e;
   font-family: system-ui, sans-serif;
   color: white;
-  height: 100vh;
+  height: max-content;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
-/***************  Barra superior  ***************/
+
+.view-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  margin-bottom: 4rem; 
+}
+/* #endregion **************************************/
+
+/* #region **********  Barra superior  *************/
 .top-bar {
   position: relative;
-  height: 50px;
+  height: 3.5rem;
   display: flex;
   align-items: center;
-  padding: 0 10px;
+  padding: 0 0.8rem;
   background-color: #1e1e1e;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   z-index: 1000;
@@ -110,38 +123,32 @@ async function logout() {
   align-items: center;
 }
 .app-name {
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  margin-left: 8px;
+  margin-left: 0.5rem;
   pointer-events: none;
 }
-.center-title {
+.page-title {
   margin-left: auto;
   white-space: nowrap;        
-  font-size: 1.7rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 400;
   color: #ccc;
   pointer-events: none;
   overflow: hidden;
   text-overflow: ellipsis;   
-  padding-right: 10px;
+  padding-right: 1rem;
 }
-/*************************************************/
+/* #endregion **************************************/
 
-.view-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  margin-bottom: 60px; 
-}
-
+/* #region **********  Barra inferior  *************/
 .bottom-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   height: 10vh;
-  max-height: 60px;
+  max-height: 4rem;
   background-color: #3498db;
   display: flex;
   align-items: center;
@@ -175,10 +182,12 @@ async function logout() {
 .logout-btn:hover {
   background-color: #c0392b;
 }
+/* #endregion **************************************/
 
+/* #region **************  Login  ******************/
 .loading {
   text-align: center;
-  margin-top: 100px;
+  margin-top: 10rem;
   font-size: 2rem;
 }
 
@@ -186,15 +195,16 @@ async function logout() {
   background-color: #3498db;
   border: none;
   color: white;
-  padding: 10px 16px;
+  padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1.2rem;
   transition: background-color 0.2s ease;
-  margin-top: 120px;
+  margin-top: 2rem;
 }
 
 .login-button:hover {
   background-color: #2980b9;
 }
+/* #endregion **************************************/
 </style>
