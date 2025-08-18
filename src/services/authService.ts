@@ -1,7 +1,6 @@
-import {auth,db} from '../firebase';
-import {GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged,type User} from 'firebase/auth';
-import {doc,setDoc,getDoc,serverTimestamp,
-} from 'firebase/firestore';
+import { auth, db } from '../firebase';
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, type User } from 'firebase/auth';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 const provider = new GoogleAuthProvider();
 
@@ -24,8 +23,8 @@ const isPrivateMode = async (): Promise<boolean> => {
   });
 };
 
-/* Inicia sesión con Google y crea el documento de usuario si no existe */
-export const loginWithGoogle = async (): Promise<User> => {
+/* Inicia sesión con Google usando redirect */
+export const loginWithGoogle = async (): Promise<void> => {
   if (isSafari()) {
     const privateMode = await isPrivateMode();
     if (privateMode) {
@@ -34,8 +33,14 @@ export const loginWithGoogle = async (): Promise<User> => {
     }
   }
 
-  const result = await signInWithPopup(auth, provider);
-  const user = result.user;
+  // Redirige al usuario a Google
+  await signInWithRedirect(auth, provider);
+};
+
+/* Debe llamarse al cargar la app para manejar el resultado del redirect */
+export const handleRedirectResult = async (): Promise<User | null> => {
+  const result = await getRedirectResult(auth);
+  const user = result?.user ?? null;
 
   if (user) {
     const userRef = doc(db, 'users', user.uid);

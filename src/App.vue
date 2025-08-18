@@ -43,13 +43,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed  } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import MacroCalculator from './views/MacroCalculator.vue'
 import AddFood from './views/AddFood.vue'
 import RecipesView from './views/RecipesView.vue'
 import ObjectivesView from './views/ObjectivesView.vue'
 import { NNotificationProvider } from 'naive-ui'
-import { loginWithGoogle, logout as logoutService, getCurrentUser } from './services/authService'
+import { loginWithGoogle, handleRedirectResult, logout as logoutService, getCurrentUser } from './services/authService'
 import type { User } from 'firebase/auth'
 
 const currentView = ref<'calculator' | 'addFood' | 'recipes' | 'objetives'>('calculator')
@@ -67,13 +67,23 @@ const viewTitle = computed(() => {
 })
 
 onMounted(async () => {
-  user.value = await getCurrentUser()
-  loading.value = false
+  try {
+    const redirectedUser = await handleRedirectResult()
+    if (redirectedUser) {
+      user.value = redirectedUser
+    } else {
+      user.value = await getCurrentUser()
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
 })
 
 async function login() {
   try {
-    user.value = await loginWithGoogle()
+    await loginWithGoogle()
   } catch (error) {
     console.error(error)
   }
@@ -85,6 +95,7 @@ async function logout() {
   currentView.value = 'calculator'
 }
 </script>
+
 
 <style scoped>
 /* #region ***********  Contenedores  **************/
