@@ -1,26 +1,26 @@
 <template>
   <div class="objectives-container">
     <div class="objective-group">
-      <label for="calories">Calorías:</label>
-      <input type="number" id="calories" v-model.number="objectives.calories" />
+      <label for="calories"> Calorías: </label>
+      <input type="number" class="number-input-right" id="calories" v-model.number="objectives.calories" />
     </div>
 
     <div class="objective-group">
-      <label for="protein">Proteínas (g):</label>
-      <input type="number" id="protein" v-model.number="objectives.protein" />
+      <label for="protein"> Proteínas (g): </label>
+      <input type="number" class="number-input-right" id="protein" v-model.number="objectives.protein" />
     </div>
 
     <div class="objective-group">
-      <label for="carbs">Carbohidratos (g):</label>
-      <input type="number" id="carbs" v-model.number="objectives.carbs" />
+      <label for="carbs"> Carbohidratos (g): </label>
+      <input type="number" class="number-input-right" id="carbs" v-model.number="objectives.carbs" />
     </div>
 
     <div class="objective-group">
-      <label for="fat">Grasas (g):</label>
-      <input type="number" id="fat" v-model.number="objectives.fat" />
+      <label for="fat"> Grasas (g): </label>
+      <input type="number" class="number-input-right" id="fat" v-model.number="objectives.fat" />
     </div>
 
-    <button @click="saveObjectives" class="save-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar objetivos </button>
+    <button @click="saveObjectives" class="save-btn save-btn-right"><i class="fa-solid fa-floppy-disk"></i> Guardar objetivos </button>
   </div>
 </template>
 
@@ -70,36 +70,30 @@ async function saveObjectives() {
     console.error(err)
   }
 }
-
 </script>
 
 <style scoped>
+/* #region ***********  Contenedores  **************/
 .objectives-container {
+  width: 70vh;
   max-width: 400px;
   margin: 0 auto;
-  padding: 1rem;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 1rem;
 }
 
 .objective-group {
-  margin-bottom: 1rem;
+  margin: 1rem;
   display: flex;
   flex-direction: column;
 }
 
-label {
-  font-weight: bold;
-  margin-bottom: 4px;
+.save-btn-right {
+  display: block;
+  margin-left: auto;
+  margin-top: 1rem;
 }
 
-input {
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+.number-input-right{
+  text-align: right;
 }
-
+/* #endregion **************************************/
 </style>

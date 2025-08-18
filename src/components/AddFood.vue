@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-    <!-- Mostrar formulario o lista de alimentos -->
     <div v-if="!showForm" class="food-list">
       <ul style="margin-block-start: 0.5em; margin-block-end: 1em; padding-inline-start: 2px; ">
         <li v-for="food in foods" :key="food.id" class="food-item">
@@ -12,12 +11,12 @@
         </li>
       </ul>
       <!-- Botones para añadir o escanear -->
-      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
         <button class="action-button" style="font-size: 1.3rem" @click="showForm = true"><i class="fa-solid fa-plus"></i> Registrar </button>
         <button class="action-button" style="font-size: 1.3rem" @click="startScanner"><i class="fa-solid fa-barcode"></i> Escanear </button>
       </div>
-      <!-- Modal para escanear código EAN -->
-      <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width: 80vw;">
+      <!-- Popup para escanear código EAN -->
+      <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width:70rem; max-width:80vw;">
         <div id="scanner" style=" margin: auto;"></div>
       </n-modal>
     </div>

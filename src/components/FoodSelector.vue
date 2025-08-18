@@ -31,7 +31,7 @@
           <template #trigger>
             <button class="action-button"><i class="fa-solid fa-magnifying-glass-plus"></i> Añadir Receta </button>
           </template>
-          <p style="max-width: 30vw;"> Elija una receta se su lista de recetas para añadir automáticamente todos sus ingredientes </p>
+          <p style="max-width: 40rem;"> Elija una receta se su lista de recetas para añadir automáticamente todos sus ingredientes </p>
           <n-select
             v-model:value="selectedRecipeId"
             :options="recipes"
@@ -71,11 +71,11 @@ interface SelectedFood {
 interface Recipe {
   id: string
   name: string
-  ingredients: { id: string; quantity: number }[]
+  ingredients: {id:string; quantity:number}[]
 }
 
 const foods = ref<FoodItem[]>([])
-const selectedFoods = ref<SelectedFood[]>([{ id: '', quantity: 100 }])
+const selectedFoods = ref<SelectedFood[]>([{id:'', quantity:100}])
 const auth = getAuth()
 const user = auth.currentUser
 
@@ -94,7 +94,6 @@ onMounted(async () => {
   await loadFoods()
   await loadRecipes()
   let storedFoods = localStorage.getItem('selectedFoods'+new Date().toISOString().split('T')[0])
-  console.log(storedFoods)
   selectedFoods.value = (storedFoods ? JSON.parse(storedFoods) : [{ id: '', quantity: 100 }])
   calculateTotals()
 })
@@ -134,10 +133,10 @@ async function loadRecipes() {
 }
 
 function addFood() {
-  selectedFoods.value.push({ id: '', quantity: 100 })
+  selectedFoods.value.push({id:'', quantity:100})
 }
 
-function removeFood(index: number) {
+function removeFood(index:number) {
   selectedFoods.value.splice(index, 1)
   calculateTotals()
 }
@@ -165,7 +164,6 @@ function calculateTotals() {
     }
   })
 
-  // Guardar en localStorage
   localStorage.setItem('selectedFoods'+new Date().toISOString().split('T')[0], JSON.stringify(selectedFoods.value))
 }
 
