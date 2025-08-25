@@ -33,9 +33,9 @@
       
       <!-- Si el usuario no ha iniciado sesión  --> 
       <div v-else>
-        <img src="/public/logo.png" alt="Kalos Logo" style="width:6vw; height:auto; margin-top:8rem;">
+        <img src="/public/logo.png" alt="Kalos Logo" style="width:25vw; max-width: 100px; height:auto; margin-top:4rem;">
         <h2> ¡Bienvenido a Kalos! </h2>
-        <h3 style="margin-top:5rem;"> Inicie sesión para poder empezar a usar la aplicación </h3>
+        <h3 style="margin-top:3rem;"> Inicie sesión para poder empezar a usar la aplicación </h3>
         <div class="login-buttons">
           <button @click="handleLoginGoogle" class="login-button"> Iniciar sesión con Google </button>
           <button @click="showEmailModal = true" class="login-button"> Iniciar sesión con Correo </button>
@@ -98,8 +98,8 @@ async function handleLoginGoogle() {
   try {
     user.value = await loginWithGoogle()
   } catch (error:any) {
-    console.log(error)
-    notification.error({title:'Error', content:getErrorType(error.code), duration:5000})
+    console.error(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
   }
 }
 
@@ -108,8 +108,8 @@ async function handleLoginEmail() {
     user.value = await loginWithEmail(email.value, password.value)
     closeModal()
   } catch (error:any) {
-    console.log(error)
-    notification.error({title:'Error', content:getErrorType(error.code), duration:5000})
+    console.error(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
   }
 }
 
@@ -118,8 +118,8 @@ async function handleRegisterEmail() {
     user.value = await registerWithEmail(email.value, password.value)
     closeModal()
   } catch (error:any) {
-    console.log(error)
-    notification.error({title:'Error', content:getErrorType(error.code), duration:5000})
+    console.error(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
   }
 }
 
@@ -299,8 +299,7 @@ function getErrorType(error: string): string {
   cursor: pointer;
   font-size: 1.2rem;
   transition: background-color 0.2s ease;
-  margin-top: 2rem;
-  width: 200px;        
+  margin-top: 2rem;     
   text-align: center;
 }
 
@@ -323,7 +322,8 @@ function getErrorType(error: string): string {
   background: #2c2c2c;
   padding: 2rem;
   border-radius: 8px;
-  width: 300px;
+  max-width: 500px;
+  width: 80vw;
   color: white;
   display: flex;
   flex-direction: column;
