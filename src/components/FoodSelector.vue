@@ -55,6 +55,38 @@
   </div>
 </template>
 
+<style scoped>
+.food-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 5px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.ingredient-select {
+  font-size: 1rem;
+  flex: 1 1 150px;
+  max-width: 500px;
+}
+
+.quantity-input {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  flex: 0 1 50px;
+}
+
+.ingredient-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+</style>
+
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
 import type { FoodItem } from '../types/FoodItem'
@@ -63,6 +95,7 @@ import { collection, getDocs } from 'firebase/firestore'
 import { NSelect, NPopover } from 'naive-ui'
 import { getAuth } from 'firebase/auth'
 
+//#region *****************************************   Variables   *****************************************
 interface SelectedFood {
   id: string
   quantity: number
@@ -89,7 +122,9 @@ const totals = reactive({
 
 const recipes = ref<Recipe[]>([])
 const selectedRecipeId = ref<string | null>(null)
+//#endregion **********************************************************************************************
 
+//#region *****************************************   Alimentos   *****************************************
 onMounted(async () => {
   await loadFoods()
   await loadRecipes()
@@ -144,7 +179,9 @@ function removeFood(index:number) {
 function updateSelectedFood() {
   calculateTotals()
 }
+//#endregion *********************************************************************************************
 
+//#region ***************************************   Calculo totales   *************************************
 function calculateTotals() {
   totals.carbs = 0
   totals.protein = 0
@@ -180,36 +217,5 @@ function onRecipeSelected(recipeId: string | null) {
   calculateTotals()
   selectedRecipeId.value = null
 }
+//#endregion *********************************************************************************************
 </script>
-
-<style scoped>
-.food-entry {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-bottom: 5px;
-  flex-wrap: nowrap;
-  overflow: hidden;
-}
-
-.ingredient-select {
-  font-size: 1rem;
-  flex: 1 1 150px;
-  max-width: 500px;
-}
-
-.quantity-input {
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  flex: 0 1 50px;
-}
-
-.ingredient-remove {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-</style>

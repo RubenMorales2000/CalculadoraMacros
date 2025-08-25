@@ -50,6 +50,84 @@
   </div>
 </template>
 
+<style scoped>
+.recetas-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.recipe-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.recipe-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.recipe-info {
+  flex: 1;
+}
+
+.recipe-action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 10px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.ingredient-entry {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.quantity-input {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  flex: 0 1 80px;
+}
+
+input,
+select {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.ingredient-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.right-buttons {
+  display: flex;
+  gap: 10px;
+}
+</style>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getAuth } from 'firebase/auth'
@@ -57,6 +135,7 @@ import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase
 import { db } from '../firebase'
 import { useNotification, NSelect } from 'naive-ui'
 
+//#region *****************************************   Variables   *****************************************
 interface FoodItem {
   id: string
   name: string
@@ -81,6 +160,13 @@ const showForm = ref(false)
 const isEditing = ref(false)
 const editingId = ref('')
 const notification = useNotification()
+//#endregion **********************************************************************************************
+
+//#region ******************************************   Recetas   ******************************************
+onMounted(async () => {
+  await loadFoods()
+  await loadRecipes()
+})
 
 async function loadFoods() {
   const userId = getAuth().currentUser?.uid
@@ -186,87 +272,6 @@ async function deleteRecipe(id: string) {
     console.error(err)
   }
 }
-
-onMounted(async () => {
-  await loadFoods()
-  await loadRecipes()
-})
+//#endregion **********************************************************************************************
 </script>
 
-<style scoped>
-.recetas-container {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.recipe-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 20px 0;
-}
-
-.recipe-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #ddd;
-}
-
-.recipe-info {
-  flex: 1;
-}
-
-.recipe-action {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-left: 10px;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.ingredient-entry {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: center;
-}
-
-.quantity-input {
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  flex: 0 1 80px;
-}
-
-input,
-select {
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.ingredient-remove {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.button-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-.right-buttons {
-  display: flex;
-  gap: 10px;
-}
-</style>

@@ -223,11 +223,10 @@ async function startScanner() {
     html5QrCode = new Html5Qrcode("scanner")
   }
 
-  const config = { fps: 10, qrbox: 250 }
+  const config = {fps:10, qrbox:250}
 
   try {
-    await html5QrCode.start(
-      { facingMode: "environment" },
+    await html5QrCode.start({facingMode:"environment"},
       config,
       async (eanCode: string) => {
         await html5QrCode?.stop()
@@ -244,7 +243,7 @@ async function startScanner() {
   }
 }
 
-const handleShowUpdate = (value: boolean) => {
+const handleShowUpdate = (value:boolean) => {
   scanning.value = value;
   if (!value) {
     stopScanner();
@@ -258,7 +257,7 @@ async function stopScanner() {
   }
 }
 
-async function fetchFoodByEAN(ean: string) {
+async function fetchFoodByEAN(ean:string) {
   try {
     const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${ean}.json`)
     const data = await response.json()

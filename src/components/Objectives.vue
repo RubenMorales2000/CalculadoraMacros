@@ -24,6 +24,32 @@
   </div>
 </template>
 
+<style scoped>
+/* #region ***********  Contenedores  **************/
+.objectives-container {
+  width: 70vh;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.objective-group {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.save-btn-right {
+  display: block;
+  margin-left: auto;
+  margin-top: 1rem;
+}
+
+.number-input-right{
+  text-align: right;
+}
+/* #endregion **************************************/
+</style>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { getAuth } from 'firebase/auth'
@@ -31,6 +57,7 @@ import { doc, setDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useNotification } from 'naive-ui'
 
+//#region *****************************************   Variables   *****************************************
 const notification = useNotification()
 
 const objectives = ref({
@@ -39,7 +66,9 @@ const objectives = ref({
   carbs: 0,
   fat: 0
 })
+//#endregion **********************************************************************************************
 
+//#region *****************************************   Objetivos   *****************************************
 onMounted(loadObjectives)
 
 async function loadObjectives() {
@@ -70,30 +99,6 @@ async function saveObjectives() {
     console.error(err)
   }
 }
+//#endregion **********************************************************************************************
 </script>
 
-<style scoped>
-/* #region ***********  Contenedores  **************/
-.objectives-container {
-  width: 70vh;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.objective-group {
-  margin: 1rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.save-btn-right {
-  display: block;
-  margin-left: auto;
-  margin-top: 1rem;
-}
-
-.number-input-right{
-  text-align: right;
-}
-/* #endregion **************************************/
-</style>

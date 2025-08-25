@@ -2,6 +2,7 @@
   <NNotificationProvider placement="top">
     <div class="app-container">
       <div v-if="loading" class="loading">Cargando...</div>
+      
       <!-- Si el usuario tiene la sesión iniciada -->
       <div v-else-if="user">
         <!-- Barra superior -->
@@ -43,6 +44,7 @@
       </div>
     </div>
 
+    <!-- Popup para el inicio de sesión mediante correo y pw  --> 
     <div v-if="showEmailModal" class="modal-overlay" @click="closeModal">
       <div class="modal" @click.stop>
         <h3> Acceder con Correo </h3>
@@ -57,125 +59,8 @@
         </div>
       </div>
     </div>
-
   </NNotificationProvider>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, computed  } from 'vue'
-import MacroCalculator from './views/MacroCalculator.vue'
-import AddFood from './views/AddFood.vue'
-import RecipesView from './views/RecipesView.vue'
-import ObjectivesView from './views/ObjectivesView.vue'
-import { NNotificationProvider, createDiscreteApi } from 'naive-ui'
-import { loginWithGoogle, loginWithEmail, registerWithEmail, logout as logoutService, getCurrentUser } from './services/authService'
-import type { User } from 'firebase/auth'
-
-const currentView = ref<'calculator' | 'addFood' | 'recipes' | 'objetives'>('calculator')
-const {notification} = createDiscreteApi(['notification'])
-const user = ref<User | null>(null)
-const loading = ref(true)
-const showEmailModal = ref(false)
-const email = ref('')
-const password = ref('')
-
-const viewTitle = computed(() => {
-  switch (currentView.value) {
-    case 'calculator': return 'Calculadora de Macros';
-    case 'addFood': return 'Lista de Ingredientes';
-    case 'recipes': return 'Lista de Recetas';
-    case 'objetives': return 'Objetivos Diarios';
-    default: return '';
-  }
-})
-
-onMounted(async () => {
-  user.value = await getCurrentUser()
-  loading.value = false
-})
-
-async function handleLoginGoogle() {
-  try {
-    user.value = await loginWithGoogle()
-  } catch (error:any) {
-    console.error(error)
-    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
-  }
-}
-
-async function handleLoginEmail() {
-  try {
-    user.value = await loginWithEmail(email.value, password.value)
-    closeModal()
-  } catch (error:any) {
-    console.error(error)
-    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
-  }
-}
-
-async function handleRegisterEmail() {
-  try {
-    user.value = await registerWithEmail(email.value, password.value)
-    closeModal()
-  } catch (error:any) {
-    console.error(error)
-    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
-  }
-}
-
-function closeModal() {
-  showEmailModal.value = false
-  email.value = ''
-  password.value = ''
-}
-
-async function logout() {
-  await logoutService()
-  user.value = null
-  currentView.value = 'calculator'
-}
-
-function getErrorType(error: string): string {
-  let msg = ""
-  switch (error) {
-    case 'auth/user-not-found':
-      msg = "Usuario no encontrado."
-      break
-    case 'auth/wrong-password':
-      msg = "Contraseña incorrecta."
-      break
-    case 'auth/invalid-credential':
-      msg = "Contraseña incorrecta."
-      break  
-    case 'auth/popup-closed-by-user':
-      msg = "El popup de autenticación fue cerrado antes de completar el proceso."
-      break
-    case 'auth/cancelled-popup-request':
-      msg = "Se canceló una solicitud de popup pendiente."
-      break
-    case 'auth/popup-blocked':
-      msg = "El popup fue bloqueado por el navegador."
-      break
-    case 'auth/email-already-in-use':
-      msg = "El correo electrónico ya está en uso por otra cuenta."
-      break
-    case 'auth/invalid-email':
-      msg = "El correo electrónico no es válido."
-      break
-    case 'auth/operation-not-allowed':
-      msg = "El proveedor de autenticación no está habilitado."
-      break
-    case 'auth/weak-password':
-      msg = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres."
-      break
-    default:
-      msg = "Error desconocido. Por favor, inténtelo de nuevo."
-  }
-
-  return msg;
-}
-</script>
-
 
 <style scoped>
 /* #region ***********  Contenedores  **************/
@@ -347,3 +232,119 @@ function getErrorType(error: string): string {
 }
 /* #endregion **************************************/
 </style>
+
+<script setup lang="ts">
+import { ref, onMounted, computed  } from 'vue'
+import MacroCalculator from './views/MacroCalculator.vue'
+import AddFood from './views/AddFood.vue'
+import RecipesView from './views/RecipesView.vue'
+import ObjectivesView from './views/ObjectivesView.vue'
+import { NNotificationProvider, createDiscreteApi } from 'naive-ui'
+import { loginWithGoogle, loginWithEmail, registerWithEmail, logout as logoutService, getCurrentUser } from './services/authService'
+import type { User } from 'firebase/auth'
+
+const currentView = ref<'calculator' | 'addFood' | 'recipes' | 'objetives'>('calculator')
+const {notification} = createDiscreteApi(['notification'])
+const user = ref<User | null>(null)
+const loading = ref(true)
+const showEmailModal = ref(false)
+const email = ref('')
+const password = ref('')
+
+const viewTitle = computed(() => {
+  switch (currentView.value) {
+    case 'calculator': return 'Calculadora de Macros';
+    case 'addFood': return 'Lista de Ingredientes';
+    case 'recipes': return 'Lista de Recetas';
+    case 'objetives': return 'Objetivos Diarios';
+    default: return '';
+  }
+})
+
+onMounted(async () => {
+  user.value = await getCurrentUser()
+  loading.value = false
+})
+
+async function handleLoginGoogle() {
+  try {
+    user.value = await loginWithGoogle()
+  } catch (error:any) {
+    console.error(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
+  }
+}
+
+async function handleLoginEmail() {
+  try {
+    user.value = await loginWithEmail(email.value, password.value)
+    closeModal()
+  } catch (error:any) {
+    console.error(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
+  }
+}
+
+async function handleRegisterEmail() {
+  try {
+    user.value = await registerWithEmail(email.value, password.value)
+    closeModal()
+  } catch (error:any) {
+    console.error(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:3000})
+  }
+}
+
+function closeModal() {
+  showEmailModal.value = false
+  email.value = ''
+  password.value = ''
+}
+
+async function logout() {
+  await logoutService()
+  user.value = null
+  currentView.value = 'calculator'
+}
+
+function getErrorType(error: string): string {
+  let msg = ""
+  switch (error) {
+    case 'auth/user-not-found':
+      msg = "Usuario no encontrado."
+      break
+    case 'auth/wrong-password':
+      msg = "Contraseña incorrecta."
+      break
+    case 'auth/invalid-credential':
+      msg = "Contraseña incorrecta."
+      break  
+    case 'auth/popup-closed-by-user':
+      msg = "El popup de autenticación fue cerrado antes de completar el proceso."
+      break
+    case 'auth/cancelled-popup-request':
+      msg = "Se canceló una solicitud de popup pendiente."
+      break
+    case 'auth/popup-blocked':
+      msg = "El popup fue bloqueado por el navegador."
+      break
+    case 'auth/email-already-in-use':
+      msg = "El correo electrónico ya está en uso por otra cuenta."
+      break
+    case 'auth/invalid-email':
+      msg = "El correo electrónico no es válido."
+      break
+    case 'auth/operation-not-allowed':
+      msg = "El proveedor de autenticación no está habilitado."
+      break
+    case 'auth/weak-password':
+      msg = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres."
+      break
+    default:
+      msg = "Error desconocido. Por favor, inténtelo de nuevo."
+  }
+
+  return msg;
+}
+</script>
+
