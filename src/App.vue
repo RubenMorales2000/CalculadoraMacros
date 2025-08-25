@@ -36,9 +36,28 @@
         <img src="/public/logo.png" alt="Kalos Logo" style="width:6vw; height:auto; margin-top:8rem;">
         <h2> ¡Bienvenido a Kalos! </h2>
         <h3 style="margin-top:5rem;"> Inicie sesión para poder empezar a usar la aplicación </h3>
-        <button @click="login" class="login-button"> Iniciar sesión con Google </button>
+        <div class="login-buttons">
+          <button @click="handleLoginGoogle" class="login-button"> Iniciar sesión con Google </button>
+          <button @click="showEmailModal = true" class="login-button"> Iniciar sesión con Correo </button>
+        </div>
       </div>
     </div>
+
+    <div v-if="showEmailModal" class="modal-overlay" @click="closeModal">
+      <div class="modal" @click.stop>
+        <h3> Acceder con Correo </h3>
+        <h5> Si no tienes ningún usuario creado, rellena la información solicitada y haz click en "Crear Cuenta" </h5>
+
+        <input v-model="email" type="email" placeholder="Correo electrónico" />
+        <input v-model="password" type="password" placeholder="Contraseña" />
+
+        <div class="modal-actions">
+          <button @click="handleLoginEmail" class="save-btn">Login</button>
+          <button @click="handleRegisterEmail" class="save-btn">Crear cuenta</button>
+        </div>
+      </div>
+    </div>
+
   </NNotificationProvider>
 </template>
 
@@ -48,13 +67,17 @@ import MacroCalculator from './views/MacroCalculator.vue'
 import AddFood from './views/AddFood.vue'
 import RecipesView from './views/RecipesView.vue'
 import ObjectivesView from './views/ObjectivesView.vue'
-import { NNotificationProvider } from 'naive-ui'
-import { loginWithGoogle, logout as logoutService, getCurrentUser } from './services/authService'
+import { NNotificationProvider, createDiscreteApi } from 'naive-ui'
+import { loginWithGoogle, loginWithEmail, registerWithEmail, logout as logoutService, getCurrentUser } from './services/authService'
 import type { User } from 'firebase/auth'
 
 const currentView = ref<'calculator' | 'addFood' | 'recipes' | 'objetives'>('calculator')
+const {notification} = createDiscreteApi(['notification'])
 const user = ref<User | null>(null)
 const loading = ref(true)
+const showEmailModal = ref(false)
+const email = ref('')
+const password = ref('')
 
 const viewTitle = computed(() => {
   switch (currentView.value) {
@@ -71,18 +94,85 @@ onMounted(async () => {
   loading.value = false
 })
 
-async function login() {
+async function handleLoginGoogle() {
   try {
     user.value = await loginWithGoogle()
-  } catch (error) {
-    console.error(error)
+  } catch (error:any) {
+    console.log(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:5000})
   }
+}
+
+async function handleLoginEmail() {
+  try {
+    user.value = await loginWithEmail(email.value, password.value)
+    closeModal()
+  } catch (error:any) {
+    console.log(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:5000})
+  }
+}
+
+async function handleRegisterEmail() {
+  try {
+    user.value = await registerWithEmail(email.value, password.value)
+    closeModal()
+  } catch (error:any) {
+    console.log(error)
+    notification.error({title:'Error', content:getErrorType(error.code), duration:5000})
+  }
+}
+
+function closeModal() {
+  showEmailModal.value = false
+  email.value = ''
+  password.value = ''
 }
 
 async function logout() {
   await logoutService()
   user.value = null
   currentView.value = 'calculator'
+}
+
+function getErrorType(error: string): string {
+  let msg = ""
+  switch (error) {
+    case 'auth/user-not-found':
+      msg = "Usuario no encontrado."
+      break
+    case 'auth/wrong-password':
+      msg = "Contraseña incorrecta."
+      break
+    case 'auth/invalid-credential':
+      msg = "Contraseña incorrecta."
+      break  
+    case 'auth/popup-closed-by-user':
+      msg = "El popup de autenticación fue cerrado antes de completar el proceso."
+      break
+    case 'auth/cancelled-popup-request':
+      msg = "Se canceló una solicitud de popup pendiente."
+      break
+    case 'auth/popup-blocked':
+      msg = "El popup fue bloqueado por el navegador."
+      break
+    case 'auth/email-already-in-use':
+      msg = "El correo electrónico ya está en uso por otra cuenta."
+      break
+    case 'auth/invalid-email':
+      msg = "El correo electrónico no es válido."
+      break
+    case 'auth/operation-not-allowed':
+      msg = "El proveedor de autenticación no está habilitado."
+      break
+    case 'auth/weak-password':
+      msg = "La contraseña es demasiado débil. Debe tener al menos 6 caracteres."
+      break
+    default:
+      msg = "Error desconocido. Por favor, inténtelo de nuevo."
+  }
+
+  return msg;
 }
 </script>
 
@@ -186,6 +276,14 @@ async function logout() {
 /* #endregion **************************************/
 
 /* #region **************  Login  ******************/
+.login-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* opcional: centrar */
+  gap: 1rem;           /* espacio entre botones */
+  margin-top: 2rem;
+}
+
 .loading {
   text-align: center;
   margin-top: 10rem;
@@ -202,10 +300,50 @@ async function logout() {
   font-size: 1.2rem;
   transition: background-color 0.2s ease;
   margin-top: 2rem;
+  width: 200px;        
+  text-align: center;
 }
 
 .login-button:hover {
   background-color: #2980b9;
+}
+/* #endregion **************************************/
+
+/* #region **************  Modal  ******************/
+.modal-overlay {
+  position: fixed;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.modal {
+  background: #2c2c2c;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 300px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.modal input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+}
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.modal-actions button {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 /* #endregion **************************************/
 </style>
