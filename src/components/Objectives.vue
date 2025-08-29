@@ -1,4 +1,5 @@
 <template>
+  <!-- Los objetivos diarios del usuario -->
   <div class="objectives-container">
     <div class="objective-group">
       <label for="calories"> Calorías: </label>
@@ -37,7 +38,9 @@
   display: flex;
   flex-direction: column;
 }
+/* #endregion **************************************/
 
+/* #region ************  Formulario  ***************/
 .save-btn-right {
   display: block;
   margin-left: auto;
@@ -68,9 +71,11 @@ const objectives = ref({
 })
 //#endregion **********************************************************************************************
 
-//#region *****************************************   Objetivos   *****************************************
+//#region *******************************************   Hooks   *******************************************
 onMounted(loadObjectives)
+//#endregion **********************************************************************************************
 
+//#region *****************************************   Objetivos   *****************************************
 async function loadObjectives() {
   const userId = getAuth().currentUser?.uid
   if (!userId) return

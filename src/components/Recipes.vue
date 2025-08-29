@@ -1,24 +1,27 @@
 <template>
   <div class="recetas-container">
+
+    <!-- Lista de recetas creadas -->
     <div v-if="!showForm">
       <ul class="recipe-list">
         <li v-for="recipe in recipes" :key="recipe.id" class="recipe-item">
           <div class="recipe-info">
             <strong>{{ recipe.name }}</strong>
           </div>
-          <button class="recipe-action" @click="editRecipe(recipe)">✏️</button>
-          <button class="recipe-action" @click="deleteRecipe(recipe.id)">🗑️</button>
+          <button class="recipe-action" @click="editRecipe(recipe)"> ✏️ </button>
+          <button class="recipe-action" @click="deleteRecipe(recipe.id)"> 🗑️ </button>
         </li>
       </ul>
 
       <div>
-        <button class="action-button" @click="startNewRecipe" style="font-size: 1.25rem;"><i class="fas fa-plus"></i> Registrar </button>
+        <button class="action-btn" @click="startNewRecipe" style="font-size: 1.25rem;"><i class="fas fa-plus"></i> Registrar </button>
       </div>
     </div>
 
+    <!-- Formulario para la creacion / edicion de recetas -->
     <div v-else>
       <div class="form-group">
-        <label for="recipe-name">Nombre de la receta:</label>
+        <label for="recipe-name"> Nombre de la receta: </label>
         <input v-model="recipeName" id="recipe-name" type="text" />
       </div>
 
@@ -33,16 +36,16 @@
           placeholder="Elija alimento"
           class="ingredient-select"
         />
-        <input type="number" min="0" v-model.number="ingredients[index].amount" class="quantity-input">Gr</input>
-        <button @click="removeIngredient(index)" class="ingredient-remove">🗑️</button>
+        <input type="number" min="0" v-model.number="ingredients[index].amount" class="quantity-input"> Gr </input>
+        <button @click="removeIngredient(index)" class="ingredient-remove"> 🗑️ </button>
       </div>
 
       <div class="button-row">
         <div>
-          <button @click="addIngredient" class="action-button"><i class="fa-solid fa-bowl-rice"></i> Añadir ingrediente </button>
+          <button @click="addIngredient" class="action-btn"><i class="fa-solid fa-bowl-rice"></i> Añadir ingrediente </button>
         </div>
         <div class="right-buttons">
-          <button @click="cancelEdit" class="cancel-btn"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+          <button @click="cancelEdit" class="cancel-btn"><i class="fa-solid fa-xmark"></i> Cancelar </button>
           <button @click="saveRecipe" class="save-btn"><i class="fa-solid fa-floppy-disk"></i> Guardar </button>
         </div>
       </div>
@@ -51,12 +54,15 @@
 </template>
 
 <style scoped>
+/* #region ***********  Contenedores  **************/
 .recetas-container {
   max-width: 700px;
   margin: 0 auto;
   padding: 1rem;
 }
+/* #endregion **************************************/
 
+/* #region *********  Lista de recetas  ************/
 .recipe-list {
   list-style: none;
   padding: 0;
@@ -82,7 +88,9 @@
   font-size: 1rem;
   margin-left: 10px;
 }
+/* #endregion **************************************/
 
+/* #region ************  Formulario  ***************/
 .form-group {
   margin-bottom: 1rem;
 }
@@ -99,13 +107,6 @@
   border: 1px solid #ccc;
   font-size: 1rem;
   flex: 0 1 80px;
-}
-
-input,
-select {
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
 }
 
 .ingredient-remove {
@@ -126,6 +127,7 @@ select {
   display: flex;
   gap: 10px;
 }
+/* #endregion **************************************/
 </style>
 
 <script setup lang="ts">
@@ -155,19 +157,21 @@ interface Recipe {
 const foods = ref<FoodItem[]>([])
 const recipes = ref<Recipe[]>([])
 const recipeName = ref('')
-const ingredients = ref<Ingredient[]>([{ foodId: '', amount: 0 }])
+const ingredients = ref<Ingredient[]>([{foodId:'', amount:0}])
 const showForm = ref(false)
 const isEditing = ref(false)
 const editingId = ref('')
 const notification = useNotification()
 //#endregion **********************************************************************************************
 
-//#region ******************************************   Recetas   ******************************************
+//#region *******************************************   Hooks   *******************************************
 onMounted(async () => {
   await loadFoods()
   await loadRecipes()
 })
+//#endregion **********************************************************************************************
 
+//#region ***************************************   Cargar datos   ****************************************
 async function loadFoods() {
   const userId = getAuth().currentUser?.uid
   if (!userId) return
@@ -190,7 +194,9 @@ async function loadRecipes() {
     ingredients: doc.data().ingredients || []
   }))
 }
+//#endregion **********************************************************************************************
 
+//#region **************************************   Edicion recetas   **************************************
 function addIngredient() {
   ingredients.value.push({ foodId: '', amount: 0 })
 }

@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <!-- Lista de alimentos -->
     <div v-if="!showForm" class="food-list">
       <ul style="margin-block-start: 0.5em; margin-block-end: 1em; padding-inline-start: 2px; ">
         <li v-for="food in foods" :key="food.id" class="food-item">
@@ -12,8 +13,8 @@
       </ul>
       <!-- Botones para añadir o escanear -->
       <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
-        <button class="action-button" style="font-size: 1.3rem" @click="showForm = true"><i class="fa-solid fa-plus"></i> Registrar </button>
-        <button class="action-button" style="font-size: 1.3rem" @click="startScanner"><i class="fa-solid fa-barcode"></i> Escanear </button>
+        <button class="action-btn" style="font-size: 1.3rem" @click="showForm = true"><i class="fa-solid fa-plus"></i> Registrar </button>
+        <button class="action-btn" style="font-size: 1.3rem" @click="startScanner"><i class="fa-solid fa-barcode"></i> Escanear </button>
       </div>
       <!-- Popup para escanear código EAN -->
       <n-modal v-model:show="scanning" @update:show="handleShowUpdate" preset="dialog" title="Escanear código EAN" style="width:70rem; max-width:80vw;">
@@ -21,6 +22,7 @@
       </n-modal>
     </div>
 
+    <!-- Formulario para crear/editar un nuevo alimento -->
     <div v-else>
       <h2>{{ editingFood ? 'Editar ingrediente' : 'Registrar ingrediente' }}</h2>
       <form @submit.prevent="saveFood">
@@ -36,11 +38,11 @@
         </div>
       </form>
     </div>
-
   </div>
 </template>
 
 <style scoped>
+/* #region ********  Lista de alimentos  ***********/
 .food-list{
   max-width: 800px;
   margin: 0 auto;
@@ -67,7 +69,9 @@
   border: none;
   cursor: pointer;
 } 
+/* #endregion **************************************/
 
+/* #region *******  Formulario alimentos  **********/
 .nombre-ingrediente {
   width: 400px;
   max-width: 80vw;
@@ -91,6 +95,7 @@
   width: 100px;
   max-width: 10vw;
 }
+/* #endregion **************************************/
 </style>
 
 <script lang="ts" setup>
@@ -142,8 +147,11 @@ const scanning = ref(false)
 let html5QrCode: Html5Qrcode | null = null
 //#endregion **********************************************************************************************
 
+//#region *******************************************   Hooks   *******************************************
 onMounted(loadFoods)
+//#endregion **********************************************************************************************
 
+//#region *******************************************   Lista   *******************************************
 async function loadFoods() {
   if(user){
     const foodsRef = collection(db, "users", user.uid, "foods")
@@ -151,7 +159,9 @@ async function loadFoods() {
     foods.value = snapshot.docs.map(doc => ({id: doc.id,...doc.data()} as Food))
   }
 }
+//#endregion **********************************************************************************************
 
+//#region *****************************************   Formulario   ****************************************
 async function saveFood() {
   if (!newFood.name.trim()) {
     notification.error({title:'Error', description:"El nombre es obligatorio.", duration:3000})
@@ -195,7 +205,7 @@ function cancelForm() {
   editingFood.value = null
 }
 
-async function deleteFood(id: string) {
+async function deleteFood(id:string) {
   if (!user) {
     notification.error({title:'Error', description:'No hay usuario autenticado.', duration:3000})
     return
@@ -213,8 +223,9 @@ async function deleteFood(id: string) {
     }
   }
 }
+//#endregion **********************************************************************************************
 
-//#region *****************************************   Scanner   *****************************************
+//#region ******************************************   Scanner   *****************************************
 async function startScanner() {
   scanning.value = true
   await nextTick()
@@ -226,16 +237,13 @@ async function startScanner() {
   const config = {fps:10, qrbox:250}
 
   try {
-    await html5QrCode.start({facingMode:"environment"},
-      config,
+    await html5QrCode.start({facingMode:"environment"},config,
       async (eanCode: string) => {
         await html5QrCode?.stop()
         scanning.value = false
         fetchFoodByEAN(eanCode)
       },
-      errorMessage => {
-        console.warn("Escaneo fallido:", errorMessage)
-      }
+      errorMessage => {console.warn("Escaneo fallido:", errorMessage)}
     )
   } catch (err:any) {
     scanning.value = false
@@ -270,7 +278,6 @@ async function fetchFoodByEAN(ean:string) {
       newFood.fat = p.nutriments.fat_100g ?? 0
       newFood.saturatedFat = p.nutriments['saturated-fat_100g'] ?? 0
       newFood.calories = p.nutriments['energy-kcal_100g'] ?? 0
-
       showForm.value = true
       editingFood.value = null
 

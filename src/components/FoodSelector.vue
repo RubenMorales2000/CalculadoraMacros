@@ -20,16 +20,17 @@
         @input="calculateTotals"
         class="quantity-input"
       />Gr</input>
-      <button @click="removeFood(index)" class="ingredient-remove">🗑️</button>
+      <button @click="removeFood(index)" class="ingredient-remove"> 🗑️ </button>
     </div>
 
+    <!-- Botones inferiores de la lista -->
     <div style="display: flex; justify-content: center; gap: 1.0rem; margin-top: 10px;">
-      <button class="action-button" @click="addFood"><i class="fa-solid fa-bowl-rice"></i> Añadir Ingrediente </button>
+      <button class="action-btn" @click="addFood"><i class="fa-solid fa-bowl-rice"></i> Añadir Ingrediente </button>
       <!-- Selector de recetas con botón y popup -->
       <div>
         <n-popover trigger="click">
           <template #trigger>
-            <button class="action-button"><i class="fa-solid fa-magnifying-glass-plus"></i> Añadir Receta </button>
+            <button class="action-btn"><i class="fa-solid fa-magnifying-glass-plus"></i> Añadir Receta </button>
           </template>
           <p style="max-width: 40rem;"> Elija una receta se su lista de recetas para añadir automáticamente todos sus ingredientes </p>
           <n-select
@@ -56,6 +57,7 @@
 </template>
 
 <style scoped>
+/* #region *********  Lista Ingredientes  ************/
 .food-entry {
   display: flex;
   align-items: center;
@@ -85,6 +87,7 @@
   cursor: pointer;
   font-size: 1rem;
 }
+/* #endregion **************************************/
 </style>
 
 <script lang="ts" setup>
@@ -111,6 +114,8 @@ const foods = ref<FoodItem[]>([])
 const selectedFoods = ref<SelectedFood[]>([{id:'', quantity:100}])
 const auth = getAuth()
 const user = auth.currentUser
+const recipes = ref<Recipe[]>([])
+const selectedRecipeId = ref<string | null>(null)
 
 const totals = reactive({
   carbs: 0,
@@ -119,20 +124,19 @@ const totals = reactive({
   saturatedFat: 0,
   calories: 0
 })
-
-const recipes = ref<Recipe[]>([])
-const selectedRecipeId = ref<string | null>(null)
 //#endregion **********************************************************************************************
 
-//#region *****************************************   Alimentos   *****************************************
+//#region *******************************************   Hooks   *******************************************
 onMounted(async () => {
   await loadFoods()
   await loadRecipes()
   let storedFoods = localStorage.getItem('selectedFoods'+new Date().toISOString().split('T')[0])
-  selectedFoods.value = (storedFoods ? JSON.parse(storedFoods) : [{ id: '', quantity: 100 }])
+  selectedFoods.value = (storedFoods ? JSON.parse(storedFoods) : [{id:'', quantity:100}])
   calculateTotals()
 })
+//#endregion **********************************************************************************************
 
+//#region *****************************************   Alimentos   *****************************************
 async function loadFoods() {
   if (user) {
     const foodsRef = collection(db, 'users', user.uid, 'foods')

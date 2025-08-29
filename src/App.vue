@@ -94,16 +94,19 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   z-index: 1000;
 }
+
 .left-section {
   display: flex;
   align-items: center;
 }
+
 .app-name {
   font-size: 1.5rem;
   font-weight: bold;
   margin-left: 0.5rem;
   pointer-events: none;
 }
+
 .page-title {
   margin-left: auto;
   white-space: nowrap;        
@@ -164,8 +167,8 @@
 .login-buttons {
   display: flex;
   flex-direction: column;
-  align-items: center; /* opcional: centrar */
-  gap: 1rem;           /* espacio entre botones */
+  align-items: center; 
+  gap: 1rem;          
   margin-top: 2rem;
 }
 
@@ -203,6 +206,7 @@
   justify-content: center;
   z-index: 2000;
 }
+
 .modal {
   background: #2c2c2c;
   padding: 2rem;
@@ -214,16 +218,19 @@
   flex-direction: column;
   gap: 1rem;
 }
+
 .modal input {
   padding: 0.5rem;
   border-radius: 4px;
   border: none;
 }
+
 .modal-actions {
   display: flex;
   justify-content: center;
   gap: 0.5rem;
 }
+
 .modal-actions button {
   padding: 0.5rem;
   border: none;
@@ -243,6 +250,7 @@ import { NNotificationProvider, createDiscreteApi } from 'naive-ui'
 import { loginWithGoogle, loginWithEmail, registerWithEmail, logout as logoutService, getCurrentUser } from './services/authService'
 import type { User } from 'firebase/auth'
 
+//#region *****************************************   Variables   *****************************************
 const currentView = ref<'calculator' | 'addFood' | 'recipes' | 'objetives'>('calculator')
 const {notification} = createDiscreteApi(['notification'])
 const user = ref<User | null>(null)
@@ -260,12 +268,16 @@ const viewTitle = computed(() => {
     default: return '';
   }
 })
+//#endregion **********************************************************************************************
 
+//#region *******************************************   Hooks   *******************************************
 onMounted(async () => {
   user.value = await getCurrentUser()
   loading.value = false
 })
+//#endregion **********************************************************************************************
 
+//#region *******************************************   Login   *******************************************
 async function handleLoginGoogle() {
   try {
     user.value = await loginWithGoogle()
@@ -306,7 +318,9 @@ async function logout() {
   user.value = null
   currentView.value = 'calculator'
 }
+//#endregion **********************************************************************************************
 
+//#region ************************************   Metodos Auxiliares   *************************************
 function getErrorType(error: string): string {
   let msg = ""
   switch (error) {
@@ -346,5 +360,6 @@ function getErrorType(error: string): string {
 
   return msg;
 }
+//#endregion **********************************************************************************************
 </script>
 
